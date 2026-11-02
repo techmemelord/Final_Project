@@ -13,6 +13,7 @@ Image Citations:
  https://pngtree.com/freepng/hand-palms_8837556.html
  https://www.svgheart.com/product/hammer-silhouette-free-svg-file-mechanic-tool-hammer-clipart/?srsltid=AYCX9vJqd8LfqBl1km6tGosHExVthtuh0Grt6zBK54Lsc2tM9iP_boL3
  https://www.flaticon.com/free-icon/factory_4297439
+ https://www.pngkey.com/maxpic/u2e6r5w7w7u2t4e6/
  */
 
 PImage keyboard;
@@ -20,9 +21,11 @@ PImage typerImage;
 PImage keyboardProImage;
 PImage builderImage;
 PImage factoryImage;
+PImage advertiserImage;
 
 char previousKey;
 boolean playingGame = false;
+boolean achievementsUiOpen = false;
 boolean keyTyped = false;
 boolean keyboardIsBig = false;
 boolean keyboardUpgradeBought = false;
@@ -48,6 +51,10 @@ float keyboardFactoryKPS;
 float keyboardFactoriesOwned = 0;
 float keyboardFactoryCost;
 
+float keyboardAdvertiserKPS;
+float keyboardAdvertisersOwned = 0;
+float keyboardAdvertiserCost;
+
 float keyboardSizeX = 225;
 float keyboardSizeY = 100;
 float keyboardPosX = 12;
@@ -72,6 +79,9 @@ int maxBuilderButtonY = minBuilderButtonY + 75;
 
 int minFactoryButtonY = 343;
 int maxFactoryButtonY = minFactoryButtonY + 75;
+
+int minAdvertiserButtonY = 418;
+int maxAdvertiserButtonY = minAdvertiserButtonY + 75;
 void setup() {
   size(700, 500);
   keyboard = loadImage("keyboard.png");
@@ -79,6 +89,7 @@ void setup() {
   keyboardProImage = loadImage("personTyping.png");
   builderImage = loadImage("hammer.png");
   factoryImage = loadImage("factory.png");
+  advertiserImage = loadImage("manInSuit.png");
 }
 
 void draw() {
@@ -110,6 +121,7 @@ void draw() {
     keyboardProCost = 100 + (keyboardProsOwned * 100 * 0.3);
     keyboardBuilderCost = 750 + (keyboardBuildersOwned * 750 * 0.3);
     keyboardFactoryCost = 5000 + (keyboardFactoriesOwned * 5000 * 0.4);
+    keyboardAdvertiserCost = 8000 + (keyboardAdvertisersOwned * 8000 * 0.4);
     keysPerSecond = typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS;
     background(116, 120, 129);
     fill(255, 255, 255);
@@ -179,6 +191,17 @@ void draw() {
       }
     }
     rect(410, 343, 75, 75);
+    if (keysTyped >= keyboardAdvertiserCost) {
+      fill(0, 128, 0);
+      if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minAdvertiserButtonY && mouseY <= maxAdvertiserButtonY)) {
+        fill(0, 200, 0);
+      }
+    } else {
+      fill(128, 0, 0);
+      if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minAdvertiserButtonY && mouseY <= maxAdvertiserButtonY)) {
+        fill(200, 0, 0);
+      }
+    }
     rect(410, 418, 75, 75);
     fill(255, 255, 255);
     text("Buy", 420, 165);
@@ -191,17 +214,32 @@ void draw() {
     image(keyboardProImage, 625, 185, 90, 90);
     image(builderImage,650, 290, 50,50);
     image(factoryImage,650,368,50,50);
+        image(advertiserImage,650,445,50,50);
     fill(0, 0, 0);
     textSize(22);
     text("Auto Typers", 495, 140);
     text("Keyboard Pros", 495, 215);
     text("Keyboard Builders", 495, 290);
     text("Keyboard Factories", 495, 365);
+    text("Keyboard Advertisers", 495, 440);
     textSize(20);
     text("Price: " + int(typerCost) + " Keys", 495, 185);
     text("Price: " + int(keyboardProCost) + " Keys", 495, 260);
     text("Price: " + int(keyboardBuilderCost) + " Keys", 495, 335);
     text("Price: " + int(keyboardFactoryCost) + " Keys", 495, 410);
+     text("Price: " + int(keyboardAdvertiserCost) + " Keys", 495, 485);
+     fill(255,255,255);
+     rect(500,60,200,50);
+     fill(0,0,0);
+     text("Achievements",545,95);
+     fill(116,120,129);
+     stroke(50,50,50);
+     rect(100,100,500,300);
+     fill(255,255,255);
+          rect(150,150,150,75);
+     textSize(32);
+     text("Achievements",260,140);
+     
     if (keysPerSecond > 0) {
       keysTyped = keysTyped + (keysPerSecond / frameRate); //frameRate outputs to the amount of frames that the processing sketch is currently running at
     }
@@ -240,6 +278,9 @@ void mousePressed() {
   } else if ((keysTyped >= keyboardFactoryCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minFactoryButtonY && mouseY <= maxFactoryButtonY)) {
     keysTyped = keysTyped - keyboardFactoryCost;
     keyboardFactoriesOwned = keyboardFactoriesOwned + 1;
+  } else if ((keysTyped >= keyboardAdvertiserCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minAdvertiserButtonY && mouseY <= maxAdvertiserButtonY)) {
+    keysTyped = keysTyped - keyboardAdvertiserCost;
+    keyboardAdvertisersOwned = keyboardAdvertisersOwned + 1;
   }
 }
 void keyPressed() {
