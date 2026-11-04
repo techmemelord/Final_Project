@@ -14,6 +14,7 @@ Image Citations:
  https://www.svgheart.com/product/hammer-silhouette-free-svg-file-mechanic-tool-hammer-clipart/?srsltid=AYCX9vJqd8LfqBl1km6tGosHExVthtuh0Grt6zBK54Lsc2tM9iP_boL3
  https://www.flaticon.com/free-icon/factory_4297439
  https://www.pngkey.com/maxpic/u2e6r5w7w7u2t4e6/
+ https://iconscout.com/3d-icon/keycap-a-3d-icon_9741287
  */
 
 PImage keyboard;
@@ -23,6 +24,7 @@ PImage builderImage;
 PImage factoryImage;
 PImage advertiserImage;
 PImage achievementIco;
+PImage keyboardUpgradeIco;
 char previousKey;
 
 boolean playingGame = false;
@@ -34,8 +36,9 @@ boolean achievementsOpen = false;
 boolean startAchievementEarned = false;
 boolean sentenceAchievementEarned = false;
 boolean earningAchievement = false;
-boolean keyboardLessonUpgradeOwned = false;
+boolean typingLessonUpgradeOwned = false;
 boolean typingAmateurAchievementEarned = false;
+boolean automationAchievementEarned = false;
 
 String achievementName = "";
 
@@ -44,9 +47,13 @@ float keysTypedEver = 0;
 float keysFromKeyboard = 0;
 float typingMultiplier = 1;
 float keysPerSecond;
+
 float typersOwned = 0;
+float typerMultiplier = 1;
 float typerCost;
 float typerKPS;
+int typingLessonUpgradeCost = 250;
+int typerUpgradeCost = 100;
 
 float keyboardProKPS;
 float keyboardProsOwned = 0;
@@ -104,15 +111,25 @@ int maxStartAchievementButtonX = minStartAchievementButtonX + 50;
 int minStartAchievementButtonY = 175;
 int maxStartAchievementButtonY = minStartAchievementButtonY + 50;
 
-int minSentenceAchievementButtonX = 150;
+int minSentenceAchievementButtonX = 160;
 int maxSentenceAchievementButtonX = minSentenceAchievementButtonX + 50;
 int minSentenceAchievementButtonY = 175;
 int maxSentenceAchievementButtonY = minSentenceAchievementButtonY + 50;
 
-int minAmateurAchievementButtonX = 200;
+int minAmateurAchievementButtonX = 220;
 int maxAmateurAchievementButtonX = minAmateurAchievementButtonX + 50;
 int minAmateurAchievementButtonY = 175;
 int maxAmateurAchievementButtonY = minAmateurAchievementButtonY + 50;
+
+int minAutomationAchievementButtonX = 280;
+int maxAutomationAchievementButtonX = minAutomationAchievementButtonX + 50;
+int minAutomationAchievementButtonY = 175;
+int maxAutomationAchievementButtonY = minAutomationAchievementButtonY + 50;
+
+int minKeyboardUpgradeX = 260;
+int minKeyboardUpgradeY = 120;
+int maxKeyboardUpgradeX = minKeyboardUpgradeX + 50;
+int maxKeyboardUpgradeY = minKeyboardUpgradeY + 50;
 
 void setup() {
   size(700, 500);
@@ -123,6 +140,7 @@ void setup() {
   factoryImage = loadImage("factory.png");
   advertiserImage = loadImage("manInSuit.png");
   achievementIco = loadImage("trophy.png");
+  keyboardUpgradeIco = loadImage("keycapUpgIco.png");
 }
 
 void draw() {
@@ -149,7 +167,7 @@ void draw() {
       timeSinceStart = millis(); //the millis function calculates how many milliseconds the program has been running for since it started up
     }
     stroke(50, 50, 50);
-    typerKPS = (typersOwned * 0.1);
+    typerKPS = (typersOwned * 0.1 * typerMultiplier);
     keyboardProKPS = keyboardProsOwned;
     keyboardBuilderKPS = keyboardBuildersOwned * 10;
     keyboardFactoryKPS = keyboardFactoriesOwned * 75;
@@ -179,6 +197,7 @@ void draw() {
     rect(410, 268, 300, 75);
     rect(410, 343, 300, 75);
     rect(410, 418, 300, 75);
+    
     if (keysTypedEver >= 50 && startAchievementEarned == false) {
       startAchievementEarned = true;
       earningAchievement = true;
@@ -191,7 +210,12 @@ void draw() {
       typingAmateurAchievementEarned = true;
       earningAchievement = true;
       achievementName = "Amateur Typing";
+       } else if (automationAchievementEarned == false && keysPerSecond >= 1) {
+      automationAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Casual Automation";
     }
+    
     if (keysTyped >= typerCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minTypersButtonY && mouseY <= maxTypersButtonY)) {
@@ -281,7 +305,34 @@ void draw() {
     rect(500, 60, 200, 50);
     fill(0, 0, 0);
     text("Achievements", 545, 95);
-
+    if (typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false) {
+      fill(255, 255, 255);
+      rect(260, 120, 50, 50);
+      image(keyboardUpgradeIco, 260, 120, 50, 50);
+      if ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY)) {
+        rect(325, 100, 250, 75);
+        textSize(18);
+        fill(0,0,0);
+        text("Keyboard Lessons", 335, 120);
+        textSize(16);
+        text("Doubles keys earned from typing",335,140);
+        text("Price " + typingLessonUpgradeCost + " Keys",335,160);
+      }
+    }
+    if (automationAchievementEarned == true && typingLessonUpgradeOwned == false) {
+      fill(255, 255, 255);
+      rect(310, 120, 50, 50);
+      image(keyboardUpgradeIco, 310, 120, 50, 50);
+      if ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY)) {
+        rect(375, 100, 250, 75);
+        textSize(18);
+        fill(0,0,0);
+        text("Keyboard Lessons", 385, 120);
+        textSize(16);
+        text("Doubles keys earned from typers",385,140);
+        text("Price " + typerUpgradeCost + " Keys",385,160);
+      }
+    }
     if (earningAchievement == true) {
       int duration = 2000;
       int timeVisible = millis() - timeSinceStart;
@@ -292,7 +343,7 @@ void draw() {
         textSize(18);
         fill(0, 0, 0);
         text("Achievement Earned:", 275, 460);
-        text(achievementName, 312, 480);
+        text(achievementName, 275, 480);
       } else {
         earningAchievement = false;
         achievementName = "";
@@ -302,15 +353,25 @@ void draw() {
       fill(116, 120, 129);
       stroke(50, 50, 50);
       rect(100, 100, 500, 300);
-      if (typingAmateurAchievementEarned == true) {
-        image(achievementIco, 210, 175, 50, 50);
-        if ((mouseX >= minAmateurAchievementButtonX && mouseX <= maxAmateurAchievementButtonX) && (mouseY >= minAmateurAchievementButtonY && mouseY <= maxAmateurAchievementButtonY)) {
+      if (automationAchievementEarned == true) {
+        image(achievementIco, 280, 175, 50, 50);
+        if ((mouseX >= minAutomationAchievementButtonX && mouseX <= maxAutomationAchievementButtonX) && (mouseY >= minAutomationAchievementButtonY && mouseY <= maxAutomationAchievementButtonY)) {
           fill(255, 255, 255);
-          rect(260, 150, 225, 75);
+          rect(330, 150, 200, 75);
           textSize(18);
           fill(0, 0, 0);
-          text("Fresh Start", 270, 175);
-          text("Earn 100 keys from typing", 270, 210);
+          text("Casual automation", 340, 175);
+          text("Earn 1 key per second", 340, 210);
+        }
+      if (typingAmateurAchievementEarned == true) {
+        image(achievementIco, 220, 175, 50, 50);
+        if ((mouseX >= minAmateurAchievementButtonX && mouseX <= maxAmateurAchievementButtonX) && (mouseY >= minAmateurAchievementButtonY && mouseY <= maxAmateurAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(270, 150, 225, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Typing Amateur", 280, 175);
+          text("Earn 100 keys from typing", 280, 210);
         }
       }
       if (sentenceAchievementEarned == true) {
@@ -335,10 +396,12 @@ void draw() {
           text("Fresh Start", 160, 175);
           text("Earn 50 keys", 160, 210);
         }
+
       }
       textSize(32);
       fill(255, 255, 255);
       text("Achievements", 260, 140);
+    }
     }
     if (keysPerSecond > 0) {
       keysTyped = keysTyped + (keysPerSecond / frameRate); //frameRate outputs to the amount of frames that the processing sketch is currently running at
@@ -361,9 +424,8 @@ void draw() {
       keyTyped = false;
       keyboardIsBig = false;
     }
-  }
 }
-
+}
 void mousePressed() {
   if ((playingGame == false) && (mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
     playingGame = true;
@@ -388,6 +450,10 @@ void mousePressed() {
     } else {
       achievementsOpen = false;
     }
+  } else if ((typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false && keysTyped >= typingLessonUpgradeCost) && ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY))) {
+    keysTyped = keysTyped - typingLessonUpgradeCost;
+    typingMultiplier = typingMultiplier * 2;
+    typingLessonUpgradeOwned = true;
   }
 }
 void keyPressed() {
