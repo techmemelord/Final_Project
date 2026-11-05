@@ -25,6 +25,7 @@ PImage factoryImage;
 PImage advertiserImage;
 PImage achievementIco;
 PImage keyboardUpgradeIco;
+PImage checkIco;
 char previousKey;
 
 boolean playingGame = false;
@@ -39,9 +40,13 @@ boolean earningAchievement = false;
 boolean typingLessonUpgradeOwned = false;
 boolean typingAmateurAchievementEarned = false;
 boolean automationAchievementEarned = false;
-
+boolean paycheckOnScreen = false;
+boolean boostInUse = false;
+boolean typerUpgradeOwned = false;
 String achievementName = "";
 
+int kpsBoostMult = 1;
+int typingBoostMult = 1;
 float keysTyped = 0;
 float keysTypedEver = 0;
 float keysFromKeyboard = 0;
@@ -52,8 +57,6 @@ float typersOwned = 0;
 float typerMultiplier = 1;
 float typerCost;
 float typerKPS;
-int typingLessonUpgradeCost = 250;
-int typerUpgradeCost = 100;
 
 float keyboardProKPS;
 float keyboardProsOwned = 0;
@@ -77,6 +80,15 @@ float keyboardPosX = 12;
 float keyboardPosY = 250;
 
 int timeSinceStart;
+int timeInMenu;
+int timePlayingGame;
+int typingLessonUpgradeCost = 250;
+int typerUpgradeCost = 100;
+int timeAccumlated;
+int timePaycheckOnScreen;
+int timeBeforeBoost;
+int paycheckPosX;
+int paycheckPosY;
 
 int minStartButtonX = 250;
 int minStartButtonY = 250;
@@ -131,6 +143,11 @@ int minKeyboardUpgradeY = 120;
 int maxKeyboardUpgradeX = minKeyboardUpgradeX + 50;
 int maxKeyboardUpgradeY = minKeyboardUpgradeY + 50;
 
+int minTyperUpgradeX = 310;
+int minTyperUpgradeY = 120;
+int maxTyperUpgradeX = minTyperUpgradeX + 50;
+int maxTyperUpgradeY = minTyperUpgradeY + 50;
+
 void setup() {
   size(700, 500);
   keyboard = loadImage("keyboard.png");
@@ -141,6 +158,7 @@ void setup() {
   advertiserImage = loadImage("manInSuit.png");
   achievementIco = loadImage("trophy.png");
   keyboardUpgradeIco = loadImage("keycapUpgIco.png");
+  checkIco = loadImage("paycheck.png");
 }
 
 void draw() {
@@ -163,6 +181,14 @@ void draw() {
     textSize(56);
     text("Play", 300, 300);
   } else if (playingGame == true) {
+    if (boostInUse == true) {
+      int timeWithBoost = millis() - timeBeforeBoost;
+      if (timeWithBoost >= 30000) {
+       boostInUse = false; 
+       kpsBoostMult = 1;
+       typingBoostMult = 1;
+      }
+    }
     if (earningAchievement == false) {
       timeSinceStart = millis(); //the millis function calculates how many milliseconds the program has been running for since it started up
     }
@@ -171,12 +197,13 @@ void draw() {
     keyboardProKPS = keyboardProsOwned;
     keyboardBuilderKPS = keyboardBuildersOwned * 10;
     keyboardFactoryKPS = keyboardFactoriesOwned * 75;
+    keyboardAdvertiserKPS = keyboardAdvertisersOwned * 150;
     typerCost = 50 + (typersOwned * 50 * 0.2);
     keyboardProCost = 100 + (keyboardProsOwned * 100 * 0.3);
     keyboardBuilderCost = 750 + (keyboardBuildersOwned * 750 * 0.3);
     keyboardFactoryCost = 5000 + (keyboardFactoriesOwned * 5000 * 0.4);
     keyboardAdvertiserCost = 8000 + (keyboardAdvertisersOwned * 8000 * 0.4);
-    keysPerSecond = typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS;
+    keysPerSecond = (typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS + keyboardAdvertiserKPS) * kpsBoostMult;
     background(116, 120, 129);
     fill(255, 255, 255);
     strokeWeight(0);
@@ -197,7 +224,7 @@ void draw() {
     rect(410, 268, 300, 75);
     rect(410, 343, 300, 75);
     rect(410, 418, 300, 75);
-    
+
     if (keysTypedEver >= 50 && startAchievementEarned == false) {
       startAchievementEarned = true;
       earningAchievement = true;
@@ -210,12 +237,12 @@ void draw() {
       typingAmateurAchievementEarned = true;
       earningAchievement = true;
       achievementName = "Amateur Typing";
-       } else if (automationAchievementEarned == false && keysPerSecond >= 1) {
+    } else if (automationAchievementEarned == false && keysPerSecond >= 1) {
       automationAchievementEarned = true;
       earningAchievement = true;
       achievementName = "Casual Automation";
     }
-    
+
     if (keysTyped >= typerCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minTypersButtonY && mouseY <= maxTypersButtonY)) {
@@ -305,6 +332,20 @@ void draw() {
     rect(500, 60, 200, 50);
     fill(0, 0, 0);
     text("Achievements", 545, 95);
+    if (automationAchievementEarned == true && typerUpgradeOwned == false) {
+      fill(255, 255, 255);
+      rect(310, 120, 50, 50);
+      image(typerImage, 310, 120, 50, 50);
+      if ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY)) {
+        rect(375, 100, 250, 75);
+        textSize(18);
+        fill(0, 0, 0);
+        text("Faster Typing Software", 385, 120);
+        textSize(16);
+        text("Doubles keys earned from typers", 385, 140);
+        text("Price " + typerUpgradeCost + " Keys", 385, 160);
+      }
+    }
     if (typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false) {
       fill(255, 255, 255);
       rect(260, 120, 50, 50);
@@ -312,25 +353,11 @@ void draw() {
       if ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY)) {
         rect(325, 100, 250, 75);
         textSize(18);
-        fill(0,0,0);
+        fill(0, 0, 0);
         text("Keyboard Lessons", 335, 120);
         textSize(16);
-        text("Doubles keys earned from typing",335,140);
-        text("Price " + typingLessonUpgradeCost + " Keys",335,160);
-      }
-    }
-    if (automationAchievementEarned == true && typingLessonUpgradeOwned == false) {
-      fill(255, 255, 255);
-      rect(310, 120, 50, 50);
-      image(keyboardUpgradeIco, 310, 120, 50, 50);
-      if ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY)) {
-        rect(375, 100, 250, 75);
-        textSize(18);
-        fill(0,0,0);
-        text("Keyboard Lessons", 385, 120);
-        textSize(16);
-        text("Doubles keys earned from typers",385,140);
-        text("Price " + typerUpgradeCost + " Keys",385,160);
+        text("Doubles keys earned from typers", 335, 140);
+        text("Price " + typingLessonUpgradeCost + " Keys", 335, 160);
       }
     }
     if (earningAchievement == true) {
@@ -363,6 +390,7 @@ void draw() {
           text("Casual automation", 340, 175);
           text("Earn 1 key per second", 340, 210);
         }
+      }
       if (typingAmateurAchievementEarned == true) {
         image(achievementIco, 220, 175, 50, 50);
         if ((mouseX >= minAmateurAchievementButtonX && mouseX <= maxAmateurAchievementButtonX) && (mouseY >= minAmateurAchievementButtonY && mouseY <= maxAmateurAchievementButtonY)) {
@@ -396,12 +424,29 @@ void draw() {
           text("Fresh Start", 160, 175);
           text("Earn 50 keys", 160, 210);
         }
-
       }
       textSize(32);
       fill(255, 255, 255);
       text("Achievements", 260, 140);
     }
+    timePlayingGame = millis() - timeAccumlated - timeInMenu - timePaycheckOnScreen;
+    if (timePlayingGame >= 1000 && paycheckOnScreen == false && boostInUse == false) {
+      timeAccumlated = millis() - timeInMenu;
+      int boostSpawnChance = int(random(1, 2));
+      if (boostSpawnChance == 1) {
+         paycheckPosX = int(random(100,601));
+         paycheckPosY = int(random(100,601));
+        paycheckOnScreen = true;
+      }
+    }
+
+    if (paycheckOnScreen == true) {
+      image(checkIco,paycheckPosX,paycheckPosY,50,50);
+      timePaycheckOnScreen = millis() - timeAccumlated - timeInMenu;
+      if (timePaycheckOnScreen >= 5000 && paycheckOnScreen == true) {
+       paycheckOnScreen = false; 
+       timePaycheckOnScreen = 0;
+      }
     }
     if (keysPerSecond > 0) {
       keysTyped = keysTyped + (keysPerSecond / frameRate); //frameRate outputs to the amount of frames that the processing sketch is currently running at
@@ -424,11 +469,14 @@ void draw() {
       keyTyped = false;
       keyboardIsBig = false;
     }
-}
+  }
 }
 void mousePressed() {
+  int maxPaycheckX = paycheckPosX + 50;
+  int maxPaycheckY = paycheckPosY + 50;
   if ((playingGame == false) && (mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
     playingGame = true;
+    timeInMenu = millis();
   } else if ((keysTyped >= typerCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minTypersButtonY && mouseY <= maxTypersButtonY)) {
     keysTyped = keysTyped - typerCost;
     typersOwned = typersOwned + 1;
@@ -454,13 +502,44 @@ void mousePressed() {
     keysTyped = keysTyped - typingLessonUpgradeCost;
     typingMultiplier = typingMultiplier * 2;
     typingLessonUpgradeOwned = true;
+  } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
+    keysTyped = keysTyped - typerUpgradeCost;
+    typingMultiplier = typingMultiplier * 2;
+    typerUpgradeOwned = true;
+  } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
+    paycheckOnScreen = false;
+   if (keysPerSecond > 0) {
+    int boostChoiceNum = int(random(1,4));
+    if (boostChoiceNum == 1) {
+      keysTyped = keysTyped + (15 + (15 * keysPerSecond));
+      keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
+    } else if (boostChoiceNum == 2) {
+      typingBoostMult = typingBoostMult * 2;
+      timeBeforeBoost = millis();
+      boostInUse = true;
+    } else if (boostChoiceNum == 3) {
+      timeBeforeBoost = millis();
+      boostInUse = true;
+      kpsBoostMult = 2;
+    }
+   } else {
+     int boostChoiceNum = int(random(1,3));
+     if (boostChoiceNum == 1) {
+      keysTyped = keysTyped + (15 + (15 * keysPerSecond));
+      keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
+    } else if (boostChoiceNum == 2) {
+      typingBoostMult = 2;
+      boostInUse = true;
+      timeBeforeBoost = millis();
+    }
+   }
   }
 }
 void keyPressed() {
   if (key != previousKey && playingGame == true) {
-    keysTyped = keysTyped  + typingMultiplier;
-    keysFromKeyboard = keysFromKeyboard + typingMultiplier;
-    keysTypedEver = keysTypedEver + typingMultiplier;
+    keysTyped = keysTyped  + (typingMultiplier * typingBoostMult);
+    keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult);
+    keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult);
     previousKey = key;
     keyTyped = true;
     keyboardSizeX = 225;
