@@ -44,7 +44,8 @@ boolean paycheckOnScreen = false;
 boolean boostInUse = false;
 boolean typerUpgradeOwned = false;
 String achievementName = "";
-
+String boostName = "";
+String boostDescription = "";
 int kpsBoostMult = 1;
 int typingBoostMult = 1;
 float keysTyped = 0;
@@ -79,6 +80,7 @@ float keyboardSizeY = 100;
 float keyboardPosX = 12;
 float keyboardPosY = 250;
 
+int timeWithBoost;
 int timeSinceStart;
 int timeInMenu;
 int timePlayingGame;
@@ -182,18 +184,18 @@ void draw() {
     text("Play", 300, 300);
   } else if (playingGame == true) {
     if (boostInUse == true) {
-      int timeWithBoost = millis() - timeBeforeBoost;
+      timeWithBoost = millis() - timeBeforeBoost;
       if (timeWithBoost >= 30000) {
-       boostInUse = false; 
-       kpsBoostMult = 1;
-       typingBoostMult = 1;
+        boostInUse = false;
+        kpsBoostMult = 1;
+        typingBoostMult = 1;
       }
     }
     if (earningAchievement == false) {
       timeSinceStart = millis(); //the millis function calculates how many milliseconds the program has been running for since it started up
     }
     stroke(50, 50, 50);
-    typerKPS = (typersOwned * 0.1 * typerMultiplier);
+    typerKPS = (typersOwned * typerMultiplier * 0.1);
     keyboardProKPS = keyboardProsOwned;
     keyboardBuilderKPS = keyboardBuildersOwned * 10;
     keyboardFactoryKPS = keyboardFactoriesOwned * 75;
@@ -329,6 +331,12 @@ void draw() {
     text("Price: " + int(keyboardFactoryCost) + " Keys", 495, 410);
     text("Price: " + int(keyboardAdvertiserCost) + " Keys", 495, 485);
     fill(255, 255, 255);
+    if (boostInUse == true) {
+      textSize(18);
+      text(boostName + "!", 65, 400);
+      textSize(16);
+      text(boostDescription + " for " + (((timeWithBoost / 1000) * -1) + 30) + " seconds", 10, 450);
+    }
     rect(500, 60, 200, 50);
     fill(0, 0, 0);
     text("Achievements", 545, 95);
@@ -430,22 +438,22 @@ void draw() {
       text("Achievements", 260, 140);
     }
     timePlayingGame = millis() - timeAccumlated - timeInMenu - timePaycheckOnScreen;
-    if (timePlayingGame >= 1000 && paycheckOnScreen == false && boostInUse == false) {
+    if (timePlayingGame >= 5000 && paycheckOnScreen == false && boostInUse == false) {
       timeAccumlated = millis() - timeInMenu;
       int boostSpawnChance = int(random(1, 2));
       if (boostSpawnChance == 1) {
-         paycheckPosX = int(random(100,601));
-         paycheckPosY = int(random(100,601));
+        paycheckPosX = int(random(150, 551));
+        paycheckPosY = int(random(150, 551));
         paycheckOnScreen = true;
       }
     }
 
     if (paycheckOnScreen == true) {
-      image(checkIco,paycheckPosX,paycheckPosY,50,50);
+      image(checkIco, paycheckPosX, paycheckPosY, 50, 50);
       timePaycheckOnScreen = millis() - timeAccumlated - timeInMenu;
       if (timePaycheckOnScreen >= 5000 && paycheckOnScreen == true) {
-       paycheckOnScreen = false; 
-       timePaycheckOnScreen = 0;
+        paycheckOnScreen = false;
+        timePaycheckOnScreen = 0;
       }
     }
     if (keysPerSecond > 0) {
@@ -504,47 +512,71 @@ void mousePressed() {
     typingLessonUpgradeOwned = true;
   } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
     keysTyped = keysTyped - typerUpgradeCost;
-    typingMultiplier = typingMultiplier * 2;
+    typerMultiplier = typerMultiplier * 2;
     typerUpgradeOwned = true;
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
-   if (keysPerSecond > 0) {
-    int boostChoiceNum = int(random(1,4));
-    if (boostChoiceNum == 1) {
-      keysTyped = keysTyped + (15 + (15 * keysPerSecond));
-      keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
-    } else if (boostChoiceNum == 2) {
-      typingBoostMult = typingBoostMult * 2;
-      timeBeforeBoost = millis();
-      boostInUse = true;
-    } else if (boostChoiceNum == 3) {
-      timeBeforeBoost = millis();
-      boostInUse = true;
-      kpsBoostMult = 2;
+    if (keysPerSecond > 0) {
+      int boostChoiceNum = int(random(1, 6));
+      if (boostChoiceNum == 1) {
+        keysTyped = keysTyped + (15 + (15 * keysPerSecond));
+        keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
+      } else if (boostChoiceNum == 2) {
+        typingBoostMult = typingBoostMult * 2;
+        timeBeforeBoost = millis();
+        boostInUse = true;
+        boostName = "Dual Typing";
+        boostDescription = "x2 keys from typing";
+      } else if (boostChoiceNum == 3) {
+        typingBoostMult = 3;
+        boostName = "Triple Typing";
+        boostDescription = "x3 keys from typing";
+        boostInUse = true;
+        timeBeforeBoost = millis();
+      } else if (boostChoiceNum == 4) {
+        timeBeforeBoost = millis();
+        boostInUse = true;
+        kpsBoostMult = 2;
+        boostName = "Double Production";
+        boostDescription = "x2 KPS";
+      } else if (boostChoiceNum == 5) {
+        timeBeforeBoost = millis();
+        boostInUse = true;
+        kpsBoostMult = 3;
+        boostName = "Triple Production";
+        boostDescription = "x3 KPS";
+      }
+    } else {
+      int boostChoiceNum = int(random(1, 4));
+      if (boostChoiceNum == 1) {
+        keysTyped = keysTyped + 30;
+        keysTypedEver = keysTypedEver + 30;
+      } else if (boostChoiceNum == 2) {
+        typingBoostMult = 2;
+        boostName = "Dual Typing";
+        boostDescription = "x2 keys from typing";
+        boostInUse = true;
+        timeBeforeBoost = millis();
+      } else if (boostChoiceNum == 3) {
+        typingBoostMult = 3;
+        boostName = "Triple Typing";
+        boostDescription = "x3 keys from typing";
+        boostInUse = true;
+        timeBeforeBoost = millis();
+      }
     }
-   } else {
-     int boostChoiceNum = int(random(1,3));
-     if (boostChoiceNum == 1) {
-      keysTyped = keysTyped + (15 + (15 * keysPerSecond));
-      keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
-    } else if (boostChoiceNum == 2) {
-      typingBoostMult = 2;
-      boostInUse = true;
-      timeBeforeBoost = millis();
-    }
-   }
   }
 }
-void keyPressed() {
-  if (key != previousKey && playingGame == true) {
-    keysTyped = keysTyped  + (typingMultiplier * typingBoostMult);
-    keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult);
-    keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult);
-    previousKey = key;
-    keyTyped = true;
-    keyboardSizeX = 225;
-    keyboardSizeY = 100;
-    keyboardPosX = 12;
-    keyboardPosY = 250;
+  void keyPressed() {
+    if (key != previousKey && playingGame == true) {
+      keysTyped = keysTyped  + (typingMultiplier * typingBoostMult);
+      keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult);
+      keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult);
+      previousKey = key;
+      keyTyped = true;
+      keyboardSizeX = 225;
+      keyboardSizeY = 100;
+      keyboardPosX = 12;
+      keyboardPosY = 250;
+    }
   }
-}
