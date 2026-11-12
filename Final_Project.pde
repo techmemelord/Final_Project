@@ -15,11 +15,14 @@ Image Citations:
  https://www.flaticon.com/free-icon/factory_4297439
  https://www.pngkey.com/maxpic/u2e6r5w7w7u2t4e6/
  https://iconscout.com/3d-icon/keycap-a-3d-icon_9741287
- Sound effects citations:
+ Sound Effects Citations:
  https://pixabay.com/sound-effects/film-special-effects-keyboard-click-327728/
  https://pixabay.com/sound-effects/film-special-effects-cash-register-kaching-sound-effect-125042/
  https://pixabay.com/sound-effects/film-special-effects-power-up-type-1-230548/
  https://pixabay.com/sound-effects/film-special-effects-cash-register-open-567194/
+ https://pixabay.com/sound-effects/film-special-effects-mouse-click-290204/
+ Music Citations:
+ https://pixabay.com/music/instrumental-background-music-617066/
  */
 
 import processing.sound.*; //imports the processing sound library
@@ -28,6 +31,8 @@ SoundFile keyboardSound; //defines the sound variables
 SoundFile purchaseSound;
 SoundFile boostEarnSound;
 SoundFile boostLuckyEarnSound;
+SoundFile uiSound;
+SoundFile gameMusic;
 
 PImage keyboard;
 PImage typerImage;
@@ -40,6 +45,8 @@ PImage keyboardUpgradeIco;
 PImage checkIco;
 char previousKey;
 
+boolean soundsOn = true;
+boolean musicOn = true;
 boolean playingGame = false;
 boolean achievementsUiOpen = false;
 boolean keyTyped = false;
@@ -55,6 +62,7 @@ boolean automationAchievementEarned = false;
 boolean paycheckOnScreen = false;
 boolean boostInUse = false;
 boolean typerUpgradeOwned = false;
+boolean settingsOpen = false;
 String achievementName = "";
 String boostName = "";
 String boostDescription = "";
@@ -162,12 +170,29 @@ int minTyperUpgradeY = 120;
 int maxTyperUpgradeX = minTyperUpgradeX + 50;
 int maxTyperUpgradeY = minTyperUpgradeY + 50;
 
+int minSettingsButtonX = 550;
+int maxSettingsButtonX = minSettingsButtonX + 150;
+int minSettingsButtonY = 10;
+int maxSettingsButtonY = minSettingsButtonY + 50;
+
+int minSettingsSoundButtonX = 250;
+int maxSettingsSoundButtonX = minSettingsSoundButtonX + 200;
+int minSettingsSoundButtonY = 175;
+int maxSettingsSoundButtonY = minSettingsSoundButtonY + 50;
+
+int minSettingsMusicButtonX = 250;
+int maxSettingsMusicButtonX = minSettingsMusicButtonX + 200;
+int minSettingsMusicButtonY = 275;
+int maxSettingsMusicButtonY = minSettingsMusicButtonY + 50;
+
 void setup() {
   size(700, 500);
   keyboardSound = new SoundFile(this, "keyboard-click.mp3"); //loads the audio files for each of the sound variables
   purchaseSound = new SoundFile(this, "buy-audio.mp3");
   boostEarnSound = new SoundFile(this, "boost-up.mp3");
   boostLuckyEarnSound = new SoundFile(this, "lucky-boost.mp3");
+  uiSound = new SoundFile(this, "mouse-click.mp3");
+  gameMusic = new SoundFile(this, "background-music-game.mp3");
   keyboard = loadImage("keyboard.png");
   typerImage = loadImage("hand.png");
   keyboardProImage = loadImage("personTyping.png");
@@ -357,10 +382,14 @@ void draw() {
     rect(550, 60, 150, 50);
     fill(0, 0, 0);
     text("Achievements", 570, 95);
-    fill(255,255,255);
+    fill(255, 255, 255);
     rect(255, 60, 150, 50);
     fill(0, 0, 0);
     text("Save", 312, 95);
+    fill(255, 255, 255);
+    rect(550, 10, 150, 50);
+    fill(0, 0, 0);
+    text("Settings", 595, 45);
     if (automationAchievementEarned == true && typerUpgradeOwned == false) {
       fill(255, 255, 255);
       rect(310, 120, 50, 50);
@@ -403,6 +432,33 @@ void draw() {
       } else {
         earningAchievement = false;
         achievementName = "";
+      }
+    }
+    if (settingsOpen == true) {
+      fill(116, 120, 129);
+      stroke(50, 50, 50);
+      rect(200, 100, 300, 300);
+      fill(255, 255, 255);
+      stroke(0, 0, 0);
+      textSize(32);
+      text("Settings", 300, 150);
+      rect(250, 175, 200, 50);
+      textSize(24);
+      if (soundsOn == true) {
+        fill(0, 0, 0);
+        text("Sounds: On", 300, 212);
+      } else if (soundsOn == false) {
+        fill(0, 0, 0);
+        text("Sounds: Off", 300, 212);
+      }
+      fill(255, 255, 255);
+      rect(250, 275, 200, 50);
+      if (musicOn == true) {
+        fill(0, 0, 0);
+        text("Music: On", 312, 312);
+      } else if (musicOn == false) {
+        fill(0, 0, 0);
+        text("Music: Off", 312, 312);
       }
     }
     if (achievementsOpen == true) {
@@ -504,8 +560,28 @@ void mousePressed() {
   int maxPaycheckX = paycheckPosX + 50;
   int maxPaycheckY = paycheckPosY + 50;
   if ((playingGame == false) && (mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
+    uiSound.play(); //plays audio attached to uiSound variable
     playingGame = true;
     timeInMenu = millis();
+    if (musicOn == true) {
+      gameMusic.play(); //plays the audio attached to the gameMusic variable
+      gameMusic.loop(); //makes the audio play infinitely instead of stopping once it ends
+    }
+  } else if ((mouseX >= minSettingsSoundButtonX && mouseX <= maxSettingsSoundButtonX) && (mouseY >= minSettingsSoundButtonY && mouseY <= maxSettingsSoundButtonY) && (settingsOpen == true)) {
+    if (soundsOn == false) {
+      soundsOn = true;
+      uiSound.play();
+    } else if (soundsOn == true) {
+      soundsOn = false;
+    }
+  } else if ((mouseX >= minSettingsMusicButtonX && mouseX <= maxSettingsMusicButtonX) && (mouseY >= minSettingsMusicButtonY && mouseY <= maxSettingsMusicButtonY) && (settingsOpen == true)) {
+    if (musicOn == false) {
+      musicOn = true;
+      gameMusic.play();
+    } else if (musicOn == true) {
+      musicOn = false;
+      gameMusic.pause();
+    }
   } else if ((keysTyped >= typerCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minTypersButtonY && mouseY <= maxTypersButtonY)) {
     keysTyped = keysTyped - typerCost;
     typersOwned = typersOwned + 1;
@@ -513,35 +589,66 @@ void mousePressed() {
   } else if ((keysTyped >= keyboardProCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minProButtonY && mouseY <= maxProButtonY)) {
     keysTyped = keysTyped - keyboardProCost;
     keyboardProsOwned = keyboardProsOwned + 1;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((keysTyped >= keyboardBuilderCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minBuilderButtonY && mouseY <= maxBuilderButtonY)) {
     keysTyped = keysTyped - keyboardBuilderCost;
     keyboardBuildersOwned = keyboardBuildersOwned + 1;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((keysTyped >= keyboardFactoryCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minFactoryButtonY && mouseY <= maxFactoryButtonY)) {
     keysTyped = keysTyped - keyboardFactoryCost;
     keyboardFactoriesOwned = keyboardFactoriesOwned + 1;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((keysTyped >= keyboardAdvertiserCost) && (mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minAdvertiserButtonY && mouseY <= maxAdvertiserButtonY)) {
     keysTyped = keysTyped - keyboardAdvertiserCost;
     keyboardAdvertisersOwned = keyboardAdvertisersOwned + 1;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((mouseX >= minAchievementButtonX && mouseX <= maxAchievementButtonX) && (mouseY >= minAchievementButtonY && mouseY <= maxAchievementButtonY)) {
     if (achievementsOpen == false) {
       achievementsOpen = true;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
     } else {
       achievementsOpen = false;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
+    }
+    
+  } else if ((mouseX >= minSettingsButtonX && mouseX <= maxSettingsButtonX) && (mouseY >= minSettingsButtonY && mouseY <= maxSettingsButtonY)) {
+    if (settingsOpen == false) {
+      settingsOpen = true;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
+    } else {
+      settingsOpen = false;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
     }
   } else if ((typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false && keysTyped >= typingLessonUpgradeCost) && ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY))) {
     keysTyped = keysTyped - typingLessonUpgradeCost;
     typingMultiplier = typingMultiplier * 2;
     typingLessonUpgradeOwned = true;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
     keysTyped = keysTyped - typerUpgradeCost;
     typerMultiplier = typerMultiplier * 2;
     typerUpgradeOwned = true;
-    purchaseSound.play();
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
     if (keysPerSecond > 0) {
@@ -549,63 +656,81 @@ void mousePressed() {
       if (boostChoiceNum == 1) {
         keysTyped = keysTyped + (15 + (15 * keysPerSecond));
         keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
-        boostLuckyEarnSound.play();
+        if (soundsOn == true) {
+          boostLuckyEarnSound.play();
+        }
       } else if (boostChoiceNum == 2) {
         typingBoostMult = typingBoostMult * 2;
         timeBeforeBoost = millis();
         boostInUse = true;
         boostName = "Dual Typing";
         boostDescription = "x2 keys from typing";
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       } else if (boostChoiceNum == 3) {
         typingBoostMult = 3;
         boostName = "Triple Typing";
         boostDescription = "x3 keys from typing";
         boostInUse = true;
         timeBeforeBoost = millis();
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       } else if (boostChoiceNum == 4) {
         timeBeforeBoost = millis();
         boostInUse = true;
         kpsBoostMult = 2;
         boostName = "Double Production";
         boostDescription = "x2 KPS";
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       } else if (boostChoiceNum == 5) {
         timeBeforeBoost = millis();
         boostInUse = true;
         kpsBoostMult = 3;
         boostName = "Triple Production";
         boostDescription = "x3 KPS";
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       }
     } else {
       int boostChoiceNum = int(random(1, 4));
       if (boostChoiceNum == 1) {
         keysTyped = keysTyped + 30;
         keysTypedEver = keysTypedEver + 30;
-        boostLuckyEarnSound.play();
+        if (soundsOn == true) {
+          boostLuckyEarnSound.play();
+        }
       } else if (boostChoiceNum == 2) {
         typingBoostMult = 2;
         boostName = "Dual Typing";
         boostDescription = "x2 keys from typing";
         boostInUse = true;
         timeBeforeBoost = millis();
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       } else if (boostChoiceNum == 3) {
         typingBoostMult = 3;
         boostName = "Triple Typing";
         boostDescription = "x3 keys from typing";
         boostInUse = true;
         timeBeforeBoost = millis();
-        boostEarnSound.play();
+        if (soundsOn == true) {
+          boostEarnSound.play();
+        }
       }
     }
   }
 }
 void keyPressed() {
   if (key != previousKey && playingGame == true) {
-    keyboardSound.play(); // plays the audio coresponding to the keyboardSound variable
+    if (soundsOn == true) {
+      keyboardSound.play(); // plays the audio coresponding to the keyboardSound variable
+    }
     keysTyped = keysTyped  + (typingMultiplier * typingBoostMult);
     keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult);
     keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult);
