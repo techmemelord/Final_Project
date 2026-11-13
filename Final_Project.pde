@@ -45,6 +45,7 @@ PImage keyboardUpgradeIco;
 PImage checkIco;
 char previousKey;
 
+boolean savingGame = false;
 boolean soundsOn = true;
 boolean musicOn = true;
 boolean playingGame = false;
@@ -185,8 +186,31 @@ int maxSettingsMusicButtonX = minSettingsMusicButtonX + 200;
 int minSettingsMusicButtonY = 275;
 int maxSettingsMusicButtonY = minSettingsMusicButtonY + 50;
 
+int minSaveButtonX = 255;
+int maxSaveButtonX = minSaveButtonX + 150;
+int minSaveButtonY = 60;
+int maxSaveButtonY = minSaveButtonY + 50;
 void setup() {
   size(700, 500);
+  JSONObject loadedSave = loadJSONObject("data/save.json"); //loads json file from destination
+  if (loadedSave != null) { //checks if loadedSave isn't null or nothing, meaning if the save is there or not
+    keysTyped = loadedSave.getFloat("keys"); //changes the value to the value of the variable in the JSON file
+    keysTypedEver = loadedSave.getFloat("keysEarnedEver", keysTypedEver);
+    typersOwned = loadedSave.getFloat("typers");
+    keyboardProsOwned = loadedSave.getFloat("keyboardPros");
+    keyboardBuildersOwned = loadedSave.getFloat("builders");
+    keysFromKeyboard = loadedSave.getFloat("keysFromKeyboard");
+    keyboardFactoriesOwned = loadedSave.getFloat("factories");
+    keyboardAdvertisersOwned = loadedSave.getFloat("advertisers");
+    soundsOn = loadedSave.getBoolean("soundsOn");
+    musicOn = loadedSave.getBoolean("musicOn");
+    typingLessonUpgradeOwned = loadedSave.getBoolean("typingLessonOwned");
+    typerUpgradeOwned = loadedSave.getBoolean("typerUpgradeOwned");
+    automationAchievementEarned = loadedSave.getBoolean("automationAchievementOwned");
+    typingAmateurAchievementEarned = loadedSave.getBoolean("typingAmateurAchievementOwned");
+    sentenceAchievementEarned = loadedSave.getBoolean("sentenceAchievementOwned");
+    startAchievementEarned = loadedSave.getBoolean("startAchievementEarned");
+  }
   keyboardSound = new SoundFile(this, "keyboard-click.mp3"); //loads the audio files for each of the sound variables
   purchaseSound = new SoundFile(this, "buy-audio.mp3");
   boostEarnSound = new SoundFile(this, "boost-up.mp3");
@@ -232,8 +256,14 @@ void draw() {
         typingBoostMult = 1;
       }
     }
-    if (earningAchievement == false) {
+    if (earningAchievement == false && savingGame == false) {
       timeSinceStart = millis(); //the millis function calculates how many milliseconds the program has been running for since it started up
+    }
+    if (typingLessonUpgradeOwned == true) {
+      typingMultiplier = 2;
+    }
+    if (typerUpgradeOwned == true) {
+      typerMultiplier = 2;
     }
     stroke(50, 50, 50);
     typerKPS = (typersOwned * typerMultiplier * 0.1);
@@ -434,6 +464,20 @@ void draw() {
         achievementName = "";
       }
     }
+    if (savingGame == true) {
+      int duration = 1000;
+      int timeVisible = millis() - timeSinceStart;
+      if (timeVisible < duration) {
+        fill(255, 255, 255);
+        stroke(50, 50, 50);
+        rect(250, 430, 200, 75);
+        textSize(24);
+        fill(0, 0, 0);
+        text("Saved Game", 290, 475);
+      } else {
+        savingGame = false;
+      }
+    }
     if (settingsOpen == true) {
       fill(116, 120, 129);
       stroke(50, 50, 50);
@@ -560,7 +604,9 @@ void mousePressed() {
   int maxPaycheckX = paycheckPosX + 50;
   int maxPaycheckY = paycheckPosY + 50;
   if ((playingGame == false) && (mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
-    uiSound.play(); //plays audio attached to uiSound variable
+    if (soundsOn == true) {
+      uiSound.play(); //plays audio attached to uiSound variable
+    }
     playingGame = true;
     timeInMenu = millis();
     if (musicOn == true) {
@@ -622,7 +668,6 @@ void mousePressed() {
         uiSound.play();
       }
     }
-    
   } else if ((mouseX >= minSettingsButtonX && mouseX <= maxSettingsButtonX) && (mouseY >= minSettingsButtonY && mouseY <= maxSettingsButtonY)) {
     if (settingsOpen == false) {
       settingsOpen = true;
@@ -637,18 +682,41 @@ void mousePressed() {
     }
   } else if ((typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false && keysTyped >= typingLessonUpgradeCost) && ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY))) {
     keysTyped = keysTyped - typingLessonUpgradeCost;
-    typingMultiplier = typingMultiplier * 2;
     typingLessonUpgradeOwned = true;
     if (soundsOn == true) {
       purchaseSound.play();
     }
   } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
     keysTyped = keysTyped - typerUpgradeCost;
-    typerMultiplier = typerMultiplier * 2;
     typerUpgradeOwned = true;
     if (soundsOn == true) {
       purchaseSound.play();
     }
+  } else if ((mouseX >= minSaveButtonX && mouseX <= maxSaveButtonX) && (mouseY >= minSaveButtonY && mouseY <= maxSaveButtonY)) {
+    savingGame = true;
+    if (soundsOn == true) {
+      uiSound.play();
+    }
+    JSONObject saveFile = new JSONObject(); //creates a JSON Object
+
+    saveFile.setFloat("keys", keysTyped); //adds values to the JSON Object
+    saveFile.setFloat("keysEarnedEver", keysTypedEver);
+    saveFile.setFloat("typers", typersOwned);
+    saveFile.setFloat("keyboardPros", keyboardProsOwned);
+    saveFile.setFloat("builders", keyboardBuildersOwned);
+    saveFile.setFloat("keysFromKeyboard", keysFromKeyboard);
+    saveFile.setFloat("factories", keyboardFactoriesOwned);
+    saveFile.setFloat("advertisers", keyboardAdvertisersOwned);
+    saveFile.setBoolean("soundsOn", soundsOn);
+    saveFile.setBoolean("musicOn", musicOn);
+    saveFile.setBoolean("typingLessonOwned", typingLessonUpgradeOwned);
+    saveFile.setBoolean("typerUpgradeOwned", typerUpgradeOwned);
+    saveFile.setBoolean("automationAchievementOwned", automationAchievementEarned);
+    saveFile.setBoolean("typingAmateurAchievementOwned", typingAmateurAchievementEarned);
+    saveFile.setBoolean("sentenceAchievementOwned", sentenceAchievementEarned);
+    saveFile.setBoolean("startAchievementEarned", startAchievementEarned);
+
+    saveJSONObject(saveFile, "data/save.json"); //saves all of those values to a .json file
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
     if (keysPerSecond > 0) {
