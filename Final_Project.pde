@@ -15,12 +15,15 @@ Image Citations:
  https://www.flaticon.com/free-icon/factory_4297439
  https://www.pngkey.com/maxpic/u2e6r5w7w7u2t4e6/
  https://iconscout.com/3d-icon/keycap-a-3d-icon_9741287
+ 
  Sound Effects Citations:
  https://pixabay.com/sound-effects/film-special-effects-keyboard-click-327728/
  https://pixabay.com/sound-effects/film-special-effects-cash-register-kaching-sound-effect-125042/
  https://pixabay.com/sound-effects/film-special-effects-power-up-type-1-230548/
  https://pixabay.com/sound-effects/film-special-effects-cash-register-open-567194/
  https://pixabay.com/sound-effects/film-special-effects-mouse-click-290204/
+ https://pixabay.com/sound-effects/film-special-effects-magic-ascend-3-259526/
+ 
  Music Citations:
  https://pixabay.com/music/instrumental-background-music-617066/
  */
@@ -33,6 +36,7 @@ SoundFile boostEarnSound;
 SoundFile boostLuckyEarnSound;
 SoundFile uiSound;
 SoundFile gameMusic;
+SoundFile rebirthSound;
 
 PImage keyboard;
 PImage typerImage;
@@ -45,6 +49,7 @@ PImage keyboardUpgradeIco;
 PImage checkIco;
 char previousKey;
 
+boolean rebirthOpen = false;
 boolean savingGame = false;
 boolean soundsOn = true;
 boolean musicOn = true;
@@ -101,6 +106,9 @@ float keyboardSizeY = 100;
 float keyboardPosX = 12;
 float keyboardPosY = 250;
 
+float rebirthCost;
+float rebirthNum = 0;
+float rebirthMult;
 int timeWithBoost;
 int timeSinceStart;
 int timeInMenu;
@@ -190,6 +198,17 @@ int minSaveButtonX = 255;
 int maxSaveButtonX = minSaveButtonX + 150;
 int minSaveButtonY = 60;
 int maxSaveButtonY = minSaveButtonY + 50;
+
+int minRebirthButtonX = 255;
+int maxRebirthButtonX = minSettingsButtonX + 150;
+int minRebirthButtonY = 10;
+int maxRebirthButtonY = minSettingsButtonY + 50;
+
+int minRebirtherButtonX = 250;
+int maxRebirtherButtonX = minRebirtherButtonX + 200;
+int minRebirtherButtonY = 335;
+int maxRebirtherButtonY = minRebirtherButtonY + 50;
+
 void setup() {
   size(700, 500);
   JSONObject loadedSave = loadJSONObject("data/save.json"); //loads json file from destination
@@ -202,6 +221,7 @@ void setup() {
     keysFromKeyboard = loadedSave.getFloat("keysFromKeyboard");
     keyboardFactoriesOwned = loadedSave.getFloat("factories");
     keyboardAdvertisersOwned = loadedSave.getFloat("advertisers");
+    rebirthNum = loadedSave.getFloat("Rebirths");
     soundsOn = loadedSave.getBoolean("soundsOn");
     musicOn = loadedSave.getBoolean("musicOn");
     typingLessonUpgradeOwned = loadedSave.getBoolean("typingLessonOwned");
@@ -216,6 +236,7 @@ void setup() {
   boostEarnSound = new SoundFile(this, "boost-up.mp3");
   boostLuckyEarnSound = new SoundFile(this, "lucky-boost.mp3");
   uiSound = new SoundFile(this, "mouse-click.mp3");
+  rebirthSound = new SoundFile(this, "ascend.mp3");
   gameMusic = new SoundFile(this, "background-music-game.mp3");
   keyboard = loadImage("keyboard.png");
   typerImage = loadImage("hand.png");
@@ -248,6 +269,11 @@ void draw() {
     textSize(56);
     text("Play", 300, 300);
   } else if (playingGame == true) {
+    if (rebirthNum > 0) {
+     rebirthMult = rebirthNum * 2; 
+    } else {
+     rebirthMult = 1; 
+    }
     if (boostInUse == true) {
       timeWithBoost = millis() - timeBeforeBoost;
       if (timeWithBoost >= 30000) {
@@ -266,6 +292,7 @@ void draw() {
       typerMultiplier = 2;
     }
     stroke(50, 50, 50);
+    rebirthCost = 1000000 * pow(10, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
     typerKPS = (typersOwned * typerMultiplier * 0.1);
     keyboardProKPS = keyboardProsOwned;
     keyboardBuilderKPS = keyboardBuildersOwned * 10;
@@ -276,7 +303,7 @@ void draw() {
     keyboardBuilderCost = 750 + (keyboardBuildersOwned * 750 * 0.3);
     keyboardFactoryCost = 5000 + (keyboardFactoriesOwned * 5000 * 0.4);
     keyboardAdvertiserCost = 8000 + (keyboardAdvertisersOwned * 8000 * 0.4);
-    keysPerSecond = (typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS + keyboardAdvertiserKPS) * kpsBoostMult;
+    keysPerSecond = (typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS + keyboardAdvertiserKPS) * kpsBoostMult * rebirthMult;
     background(116, 120, 129);
     fill(255, 255, 255);
     strokeWeight(0);
@@ -420,6 +447,10 @@ void draw() {
     rect(550, 10, 150, 50);
     fill(0, 0, 0);
     text("Settings", 595, 45);
+    fill(255, 255, 255);
+    rect(255, 10, 150, 50);
+    fill(0, 0, 0);
+    text("Rebirth", 300, 45);
     if (automationAchievementEarned == true && typerUpgradeOwned == false) {
       fill(255, 255, 255);
       rect(310, 120, 50, 50);
@@ -487,22 +518,50 @@ void draw() {
       textSize(32);
       text("Settings", 300, 150);
       rect(250, 175, 200, 50);
+      rect(250,275,200,50);
       textSize(24);
       if (soundsOn == true) {
         fill(0, 0, 0);
-        text("Sounds: On", 300, 212);
+        text("Sounds: On", 295, 212);
       } else if (soundsOn == false) {
         fill(0, 0, 0);
-        text("Sounds: Off", 300, 212);
+        text("Sounds: Off", 295, 212);
       }
-      fill(255, 255, 255);
-      rect(250, 275, 200, 50);
       if (musicOn == true) {
         fill(0, 0, 0);
-        text("Music: On", 312, 312);
+        text("Music: On", 305, 312);
       } else if (musicOn == false) {
         fill(0, 0, 0);
-        text("Music: Off", 312, 312);
+        text("Music: Off", 305, 312);
+      }
+    }
+      if (rebirthOpen == true) {
+      fill(116, 120, 129);
+      stroke(50, 50, 50);
+      rect(200, 100, 300, 300);
+      fill(255, 255, 255);
+      stroke(0, 0, 0);
+      textSize(32);
+      text("Rebirth", 312, 150);
+      textSize(16);
+      text("Rebirthing resets everything",260,190);
+      text("You keep your achievements",260,220);
+      text("Your keys output permanently doubles",225,250);
+      textSize(24);
+      if (rebirthNum < 3) {
+      text("Cost: " + int(rebirthCost) + " keys", 260, 300);
+      }
+      fill(255, 255, 255);
+      rect(250, 335, 200, 50);
+      if (rebirthNum == 3) {
+        fill(0, 0, 0);
+        text("Max Rebirths!", 290, 372);
+      } else if (rebirthNum < 3 && keysTyped >= rebirthCost) {
+        fill(0, 0, 0);
+        text("Rebirth Now", 290, 372);
+      } else {
+        fill(0, 0, 0);
+        text("Can't Rebirth", 290, 372);
       }
     }
     if (achievementsOpen == true) {
@@ -620,6 +679,20 @@ void mousePressed() {
     } else if (soundsOn == true) {
       soundsOn = false;
     }
+    } else if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY) && (rebirthOpen == true) && keysTyped >= (rebirthCost)) {
+    rebirthNum++;
+    keysTyped = 0;
+    keysTypedEver = 0;
+    typersOwned = 0;
+    keyboardProsOwned = 0;
+    keyboardBuildersOwned = 0;
+    keyboardFactoriesOwned = 0;
+    keyboardAdvertisersOwned = 0;
+    typingLessonUpgradeOwned = false;
+    if (soundsOn == true) {
+      rebirthSound.play();
+    }
+    typerUpgradeOwned = false;
   } else if ((mouseX >= minSettingsMusicButtonX && mouseX <= maxSettingsMusicButtonX) && (mouseY >= minSettingsMusicButtonY && mouseY <= maxSettingsMusicButtonY) && (settingsOpen == true)) {
     if (musicOn == false) {
       musicOn = true;
@@ -680,6 +753,18 @@ void mousePressed() {
         uiSound.play();
       }
     }
+  }  else if ((mouseX >= minRebirthButtonX && mouseX <= maxRebirthButtonX) && (mouseY >= minRebirthButtonY && mouseY <= maxRebirthButtonY)) {
+    if (rebirthOpen == false) {
+      rebirthOpen = true;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
+    } else {
+      rebirthOpen = false;
+      if (soundsOn == true) {
+        uiSound.play();
+      }
+    }
   } else if ((typingAmateurAchievementEarned == true && typingLessonUpgradeOwned == false && keysTyped >= typingLessonUpgradeCost) && ((mouseX >= minKeyboardUpgradeX && mouseX <= maxKeyboardUpgradeX) && (mouseY >= minKeyboardUpgradeY && mouseY <= maxKeyboardUpgradeY))) {
     keysTyped = keysTyped - typingLessonUpgradeCost;
     typingLessonUpgradeOwned = true;
@@ -707,6 +792,7 @@ void mousePressed() {
     saveFile.setFloat("keysFromKeyboard", keysFromKeyboard);
     saveFile.setFloat("factories", keyboardFactoriesOwned);
     saveFile.setFloat("advertisers", keyboardAdvertisersOwned);
+    saveFile.setFloat("Rebirths",rebirthNum);
     saveFile.setBoolean("soundsOn", soundsOn);
     saveFile.setBoolean("musicOn", musicOn);
     saveFile.setBoolean("typingLessonOwned", typingLessonUpgradeOwned);
@@ -715,15 +801,14 @@ void mousePressed() {
     saveFile.setBoolean("typingAmateurAchievementOwned", typingAmateurAchievementEarned);
     saveFile.setBoolean("sentenceAchievementOwned", sentenceAchievementEarned);
     saveFile.setBoolean("startAchievementEarned", startAchievementEarned);
-
     saveJSONObject(saveFile, "data/save.json"); //saves all of those values to a .json file
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
     if (keysPerSecond > 0) {
       int boostChoiceNum = int(random(1, 6));
       if (boostChoiceNum == 1) {
-        keysTyped = keysTyped + (15 + (15 * keysPerSecond));
-        keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond));
+        keysTyped = keysTyped + (15 + (15 * keysPerSecond * rebirthMult));
+        keysTypedEver = keysTypedEver + (15 + (15 * keysPerSecond * rebirthMult));
         if (soundsOn == true) {
           boostLuckyEarnSound.play();
         }
@@ -767,8 +852,8 @@ void mousePressed() {
     } else {
       int boostChoiceNum = int(random(1, 4));
       if (boostChoiceNum == 1) {
-        keysTyped = keysTyped + 30;
-        keysTypedEver = keysTypedEver + 30;
+        keysTyped = keysTyped + (30 * rebirthMult);
+        keysTypedEver = keysTypedEver + (30 * rebirthMult);
         if (soundsOn == true) {
           boostLuckyEarnSound.play();
         }
@@ -799,9 +884,9 @@ void keyPressed() {
     if (soundsOn == true) {
       keyboardSound.play(); // plays the audio coresponding to the keyboardSound variable
     }
-    keysTyped = keysTyped  + (typingMultiplier * typingBoostMult);
-    keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult);
-    keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult);
+    keysTyped = keysTyped  + (typingMultiplier * typingBoostMult) * rebirthMult;
+    keysFromKeyboard = keysFromKeyboard + (typingMultiplier * typingBoostMult) * rebirthMult;
+    keysTypedEver = keysTypedEver + (typingMultiplier * typingBoostMult) * rebirthMult;
     previousKey = key;
     keyTyped = true;
     keyboardSizeX = 225;
