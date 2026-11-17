@@ -49,6 +49,11 @@ PImage keyboardUpgradeIco;
 PImage checkIco;
 char previousKey;
 
+boolean typingLessonUpgradeOwned = false;
+boolean typerUpgradeOwned = false;
+boolean builderUpgradeOwned = false;
+boolean factoryUpgradeOwned = false;
+boolean advertiserUpgradeOwned = false;
 boolean rebirthOpen = false;
 boolean savingGame = false;
 boolean soundsOn = true;
@@ -59,15 +64,19 @@ boolean keyTyped = false;
 boolean keyboardIsBig = false;
 boolean keyboardUpgradeBought = false;
 boolean achievementsOpen = false;
+
+boolean decaAutomationAchievementEarned = false;
+boolean alphabetAutomationAchievementEarned = false;
 boolean startAchievementEarned = false;
 boolean sentenceAchievementEarned = false;
 boolean earningAchievement = false;
-boolean typingLessonUpgradeOwned = false;
 boolean typingAmateurAchievementEarned = false;
 boolean automationAchievementEarned = false;
+boolean everythingAchievementEarned = false;
+
 boolean paycheckOnScreen = false;
 boolean boostInUse = false;
-boolean typerUpgradeOwned = false;
+
 boolean settingsOpen = false;
 String achievementName = "";
 String boostName = "";
@@ -98,6 +107,7 @@ float keyboardFactoriesOwned = 0;
 float keyboardFactoryCost;
 
 float keyboardAdvertiserKPS;
+float advertiserMultiplier = 1;
 float keyboardAdvertisersOwned = 0;
 float keyboardAdvertiserCost;
 
@@ -115,6 +125,9 @@ int timeInMenu;
 int timePlayingGame;
 int typingLessonUpgradeCost = 250;
 int typerUpgradeCost = 100;
+int builderUpgradeCost = 1000;
+int FactoryUpgradeCost = 5000;
+int advertiserUpgradeCost = 9999;
 int timeAccumlated;
 int timePaycheckOnScreen;
 int timeBeforeBoost;
@@ -154,6 +167,11 @@ int maxStartAchievementButtonX = minStartAchievementButtonX + 50;
 int minStartAchievementButtonY = 175;
 int maxStartAchievementButtonY = minStartAchievementButtonY + 50;
 
+int minAlphabetAchievementButtonX = 100;
+int maxAlphabetAchievementButtonX = minAlphabetAchievementButtonX + 50;
+int minAlphabetAchievementButtonY = 235;
+int maxAlphabetAchievementButtonY = minAlphabetAchievementButtonY + 50;
+
 int minSentenceAchievementButtonX = 160;
 int maxSentenceAchievementButtonX = minSentenceAchievementButtonX + 50;
 int minSentenceAchievementButtonY = 175;
@@ -169,15 +187,30 @@ int maxAutomationAchievementButtonX = minAutomationAchievementButtonX + 50;
 int minAutomationAchievementButtonY = 175;
 int maxAutomationAchievementButtonY = minAutomationAchievementButtonY + 50;
 
+int minEverythingAchievementButtonX = 340;
+int maxEverythingAchievementButtonX = minEverythingAchievementButtonX + 50;
+int minEverythingAchievementButtonY = 175;
+int maxEverythingAchievementButtonY = minEverythingAchievementButtonY + 50;
+
 int minKeyboardUpgradeX = 260;
 int minKeyboardUpgradeY = 120;
 int maxKeyboardUpgradeX = minKeyboardUpgradeX + 50;
 int maxKeyboardUpgradeY = minKeyboardUpgradeY + 50;
 
+int minAdvertiserUpgradeX = 260;
+int minAdvertiserUpgradeY = 170;
+int maxAdvertiserUpgradeX = minAdvertiserUpgradeX + 50;
+int maxAdvertiserUpgradeY = minAdvertiserUpgradeY + 50;
+
 int minTyperUpgradeX = 310;
 int minTyperUpgradeY = 120;
 int maxTyperUpgradeX = minTyperUpgradeX + 50;
 int maxTyperUpgradeY = minTyperUpgradeY + 50;
+
+int minBuilderUpgradeX = 310;
+int minBuilderUpgradeY = 170;
+int maxBuilderUpgradeX = minBuilderUpgradeX + 50;
+int maxBuilderUpgradeY = minBuilderUpgradeY + 50;
 
 int minSettingsButtonX = 550;
 int maxSettingsButtonX = minSettingsButtonX + 150;
@@ -230,6 +263,9 @@ void setup() {
     typingAmateurAchievementEarned = loadedSave.getBoolean("typingAmateurAchievementOwned");
     sentenceAchievementEarned = loadedSave.getBoolean("sentenceAchievementOwned");
     startAchievementEarned = loadedSave.getBoolean("startAchievementEarned");
+    everythingAchievementEarned = loadedSave.getBoolean("everythingAchievementEarned");
+    advertiserUpgradeOwned = loadedSave.getBoolean("advertiserUpgradeOwned");
+    alphabetAutomationAchievementEarned = loadedSave.getBoolean("alphabetAchievementEarned");
   }
   keyboardSound = new SoundFile(this, "keyboard-click.mp3"); //loads the audio files for each of the sound variables
   purchaseSound = new SoundFile(this, "buy-audio.mp3");
@@ -291,13 +327,16 @@ void draw() {
     if (typerUpgradeOwned == true) {
       typerMultiplier = 2;
     }
+    if (advertiserUpgradeOwned == true) {
+      advertiserMultiplier = 2;
+    }
     stroke(50, 50, 50);
     rebirthCost = 1000000 * pow(10, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
     typerKPS = (typersOwned * typerMultiplier * 0.1);
     keyboardProKPS = keyboardProsOwned;
     keyboardBuilderKPS = keyboardBuildersOwned * 10;
     keyboardFactoryKPS = keyboardFactoriesOwned * 75;
-    keyboardAdvertiserKPS = keyboardAdvertisersOwned * 150;
+    keyboardAdvertiserKPS = keyboardAdvertisersOwned * 150 * advertiserMultiplier;
     typerCost = 50 + (typersOwned * 50 * 0.2);
     keyboardProCost = 100 + (keyboardProsOwned * 100 * 0.3);
     keyboardBuilderCost = 750 + (keyboardBuildersOwned * 750 * 0.3);
@@ -341,6 +380,18 @@ void draw() {
       automationAchievementEarned = true;
       earningAchievement = true;
       achievementName = "Casual Automation";
+    } else if (everythingAchievementEarned == false && typersOwned >= 1 && keyboardProsOwned >= 1 && keyboardBuildersOwned >= 1 && keyboardFactoriesOwned >= 1 && keyboardAdvertisersOwned >= 1) {
+            everythingAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "One with everything";
+    } else if (alphabetAutomationAchievementEarned == false && keysPerSecond >= 26) {
+      alphabetAutomationAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Automated Alphabet";
+    } else if (decaAutomationAchievementEarned == false && keysPerSecond >= 10) {
+     decaAutomationAchievementEarned = true;
+     earningAchievement = true;
+     achievementName = "Deca-Automation";
     }
 
     if (keysTyped >= typerCost) {
@@ -373,7 +424,7 @@ void draw() {
         fill(0, 200, 0);
       }
     } else {
-      fill(128, 0, 0);
+       fill(128, 0, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minBuilderButtonY && mouseY <= maxBuilderButtonY)) {
         fill(200, 0, 0);
       }
@@ -479,6 +530,34 @@ void draw() {
         text("Price " + typingLessonUpgradeCost + " Keys", 335, 160);
       }
     }
+        if (everythingAchievementEarned == true && advertiserUpgradeOwned == false) {
+      fill(255, 255, 255);
+      rect(260, 170, 50, 50);
+      image(advertiserImage, 260, 170, 50, 50);
+      if ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY)) {
+        rect(325, 150, 250, 75);
+        textSize(18);
+        fill(0, 0, 0);
+        text("Aggressive Advertising", 335, 170);
+        textSize(14);
+        text("Doubles keys earned from advertisers", 335, 190);
+        text("Price " + advertiserUpgradeCost + " Keys", 335, 210);
+      }
+        }
+      if (decaAutomationAchievementEarned == true && builderUpgradeOwned == false) {
+      fill(255, 255, 255);
+      rect(310, 170, 50, 50);
+      image(builderImage, 310, 170, 50, 50);
+      if ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY)) {
+        rect(375, 150, 250, 75);
+        textSize(18);
+        fill(0, 0, 0);
+        text("Faster Training", 385, 170);
+        textSize(16);
+        text("Doubles keys earned from builders", 385, 190);
+        text("Price " + builderUpgradeCost + " Keys", 385, 210);
+      }
+    }
     if (earningAchievement == true) {
       int duration = 2000;
       int timeVisible = millis() - timeSinceStart;
@@ -568,6 +647,17 @@ void draw() {
       fill(116, 120, 129);
       stroke(50, 50, 50);
       rect(100, 100, 500, 300);
+       if (everythingAchievementEarned == true) {
+        image(achievementIco, 340, 175, 50, 50);
+        if ((mouseX >= minEverythingAchievementButtonX && mouseX <= maxEverythingAchievementButtonX) && (mouseY >= minEverythingAchievementButtonY && mouseY <= maxEverythingAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(400, 150, 250, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("One with everything", 400, 175);
+          text("Have one of every building", 400, 210);
+        }
+      }
       if (automationAchievementEarned == true) {
         image(achievementIco, 280, 175, 50, 50);
         if ((mouseX >= minAutomationAchievementButtonX && mouseX <= maxAutomationAchievementButtonX) && (mouseY >= minAutomationAchievementButtonY && mouseY <= maxAutomationAchievementButtonY)) {
@@ -611,6 +701,17 @@ void draw() {
           fill(0, 0, 0);
           text("Fresh Start", 160, 175);
           text("Earn 50 keys", 160, 210);
+        }
+      }
+      if (alphabetAutomationAchievementEarned == true) {
+        image(achievementIco, 100, 235, 50, 50);
+        if ((mouseX >= minAlphabetAchievementButtonX && mouseX <= maxAlphabetAchievementButtonX) && (mouseY >= minAlphabetAchievementButtonY && mouseY <= maxAlphabetAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(150, 210, 200, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Alphabet Automation", 160, 235);
+          text("Earn 26 keys per second", 160, 270);
         }
       }
       textSize(32);
@@ -689,6 +790,10 @@ void mousePressed() {
     keyboardFactoriesOwned = 0;
     keyboardAdvertisersOwned = 0;
     typingLessonUpgradeOwned = false;
+    advertiserMultiplier = 1;
+    advertiserUpgradeOwned = false;
+    typingMultiplier = 1;
+    typerMultiplier = 1;
     if (soundsOn == true) {
       rebirthSound.play();
     }
@@ -777,6 +882,18 @@ void mousePressed() {
     if (soundsOn == true) {
       purchaseSound.play();
     }
+  } else if ((automationAchievementEarned == true && advertiserUpgradeOwned == false && keysTyped >= advertiserUpgradeCost) && ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY))) {
+    keysTyped = keysTyped - advertiserUpgradeCost;
+    advertiserUpgradeOwned = true;
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
+  } else if ((decaAutomationAchievementEarned == true && builderUpgradeOwned == false && keysTyped >= builderUpgradeCost) && ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY))) {
+    keysTyped = keysTyped - builderUpgradeCost;
+    builderUpgradeOwned = true;
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
   } else if ((mouseX >= minSaveButtonX && mouseX <= maxSaveButtonX) && (mouseY >= minSaveButtonY && mouseY <= maxSaveButtonY)) {
     savingGame = true;
     if (soundsOn == true) {
@@ -801,7 +918,11 @@ void mousePressed() {
     saveFile.setBoolean("typingAmateurAchievementOwned", typingAmateurAchievementEarned);
     saveFile.setBoolean("sentenceAchievementOwned", sentenceAchievementEarned);
     saveFile.setBoolean("startAchievementEarned", startAchievementEarned);
-    saveJSONObject(saveFile, "data/save.json"); //saves all of those values to a .json file
+    saveFile.setBoolean("everythingAchievementEarned",everythingAchievementEarned);
+    saveFile.setBoolean("advertiserUpgradeOwned",advertiserUpgradeOwned);
+    saveFile.setBoolean("alphabetAchievementEarned",alphabetAutomationAchievementEarned);
+    
+    saveJSONObject(saveFile, "data/save.json"); //saves all of those values to a .json file in the data folder with the name of "save"
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
     if (keysPerSecond > 0) {
