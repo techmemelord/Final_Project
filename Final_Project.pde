@@ -65,11 +65,16 @@ boolean keyboardIsBig = false;
 boolean keyboardUpgradeBought = false;
 boolean achievementsOpen = false;
 
+boolean earningAchievement = false;
+
+boolean localTyperAchievementEarned = false;
+boolean rebornAchievementEarned = false;
+boolean keyboardCityAchievementEarned = false;
+boolean neverTypeAchievementEarned = false;
 boolean decaAutomationAchievementEarned = false;
 boolean alphabetAutomationAchievementEarned = false;
 boolean startAchievementEarned = false;
 boolean sentenceAchievementEarned = false;
-boolean earningAchievement = false;
 boolean typingAmateurAchievementEarned = false;
 boolean automationAchievementEarned = false;
 boolean everythingAchievementEarned = false;
@@ -100,11 +105,13 @@ float keyboardProCost;
 
 float keyboardBuilderKPS;
 float keyboardBuildersOwned = 0;
+float builderMultiplier = 1;
 float keyboardBuilderCost;
 
 float keyboardFactoryKPS;
 float keyboardFactoriesOwned = 0;
 float keyboardFactoryCost;
+float factoryMultiplier = 1;
 
 float keyboardAdvertiserKPS;
 float advertiserMultiplier = 1;
@@ -126,7 +133,7 @@ int timePlayingGame;
 int typingLessonUpgradeCost = 250;
 int typerUpgradeCost = 100;
 int builderUpgradeCost = 1000;
-int FactoryUpgradeCost = 5000;
+int factoryUpgradeCost = 5000;
 int advertiserUpgradeCost = 9999;
 int timeAccumlated;
 int timePaycheckOnScreen;
@@ -172,6 +179,11 @@ int maxAlphabetAchievementButtonX = minAlphabetAchievementButtonX + 50;
 int minAlphabetAchievementButtonY = 235;
 int maxAlphabetAchievementButtonY = minAlphabetAchievementButtonY + 50;
 
+int minDecaAchievementButtonX = 160;
+int maxDecaAchievementButtonX = minDecaAchievementButtonX + 50;
+int minDecaAchievementButtonY = 235;
+int maxDecaAchievementButtonY = minDecaAchievementButtonY + 50;
+
 int minSentenceAchievementButtonX = 160;
 int maxSentenceAchievementButtonX = minSentenceAchievementButtonX + 50;
 int minSentenceAchievementButtonY = 175;
@@ -201,6 +213,11 @@ int minAdvertiserUpgradeX = 260;
 int minAdvertiserUpgradeY = 170;
 int maxAdvertiserUpgradeX = minAdvertiserUpgradeX + 50;
 int maxAdvertiserUpgradeY = minAdvertiserUpgradeY + 50;
+
+int minFactoryUpgradeX = 260;
+int minFactoryUpgradeY = 220;
+int maxFactoryUpgradeX = minFactoryUpgradeX + 50;
+int maxFactoryUpgradeY = minFactoryUpgradeY + 50;
 
 int minTyperUpgradeX = 310;
 int minTyperUpgradeY = 120;
@@ -266,6 +283,13 @@ void setup() {
     everythingAchievementEarned = loadedSave.getBoolean("everythingAchievementEarned");
     advertiserUpgradeOwned = loadedSave.getBoolean("advertiserUpgradeOwned");
     alphabetAutomationAchievementEarned = loadedSave.getBoolean("alphabetAchievementEarned");
+     keyboardCityAchievementEarned = loadedSave.getBoolean("CityAchievementEarned");
+    factoryUpgradeOwned = loadedSave.getBoolean("factoryUpgradeOwned");
+    builderUpgradeOwned = loadedSave.getBoolean("builderUpgradeOwned");
+    localTyperAchievementEarned =   loadedSave.getBoolean("localTyperAchievementEarned");
+    rebornAchievementEarned =  loadedSave.getBoolean("rebornAchievementEarned");
+    neverTypeAchievementEarned = loadedSave.getBoolean("neverTypeAchievementEarned");
+    decaAutomationAchievementEarned = loadedSave.getBoolean("decaAutomationAchievementEarned");
   }
   keyboardSound = new SoundFile(this, "keyboard-click.mp3"); //loads the audio files for each of the sound variables
   purchaseSound = new SoundFile(this, "buy-audio.mp3");
@@ -306,9 +330,9 @@ void draw() {
     text("Play", 300, 300);
   } else if (playingGame == true) {
     if (rebirthNum > 0) {
-     rebirthMult = rebirthNum * 2; 
+      rebirthMult = rebirthNum * 2;
     } else {
-     rebirthMult = 1; 
+      rebirthMult = 1;
     }
     if (boostInUse == true) {
       timeWithBoost = millis() - timeBeforeBoost;
@@ -330,12 +354,18 @@ void draw() {
     if (advertiserUpgradeOwned == true) {
       advertiserMultiplier = 2;
     }
+    if (builderUpgradeOwned == true) {
+      builderMultiplier = 2;
+    }
+    if (factoryUpgradeOwned == true) {
+      factoryMultiplier = 2;
+    }
     stroke(50, 50, 50);
     rebirthCost = 1000000 * pow(10, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
     typerKPS = (typersOwned * typerMultiplier * 0.1);
     keyboardProKPS = keyboardProsOwned;
-    keyboardBuilderKPS = keyboardBuildersOwned * 10;
-    keyboardFactoryKPS = keyboardFactoriesOwned * 75;
+    keyboardBuilderKPS = keyboardBuildersOwned * 10 * builderMultiplier;
+    keyboardFactoryKPS = keyboardFactoriesOwned * 75 * factoryMultiplier;
     keyboardAdvertiserKPS = keyboardAdvertisersOwned * 150 * advertiserMultiplier;
     typerCost = 50 + (typersOwned * 50 * 0.2);
     keyboardProCost = 100 + (keyboardProsOwned * 100 * 0.3);
@@ -381,7 +411,7 @@ void draw() {
       earningAchievement = true;
       achievementName = "Casual Automation";
     } else if (everythingAchievementEarned == false && typersOwned >= 1 && keyboardProsOwned >= 1 && keyboardBuildersOwned >= 1 && keyboardFactoriesOwned >= 1 && keyboardAdvertisersOwned >= 1) {
-            everythingAchievementEarned = true;
+      everythingAchievementEarned = true;
       earningAchievement = true;
       achievementName = "One with everything";
     } else if (alphabetAutomationAchievementEarned == false && keysPerSecond >= 26) {
@@ -389,9 +419,25 @@ void draw() {
       earningAchievement = true;
       achievementName = "Automated Alphabet";
     } else if (decaAutomationAchievementEarned == false && keysPerSecond >= 10) {
-     decaAutomationAchievementEarned = true;
-     earningAchievement = true;
-     achievementName = "Deca-Automation";
+      decaAutomationAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Deca-Automation";
+    } else if ( neverTypeAchievementEarned == false && keysTypedEver >= 10000 && keysFromKeyboard <= 50) {
+      neverTypeAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Nevertype";
+    } else if (keyboardCityAchievementEarned == false && keysTypedEver >= 10000) {
+      keyboardCityAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Keyboard City";
+    } else if (rebornAchievementEarned == false && rebirthNum >= 1) {
+      rebornAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Born Again";
+    } else if (localTyperAchievementEarned == false && keysTypedEver >= 1000) {
+      localTyperAchievementEarned = true;
+      earningAchievement = true;
+      achievementName = "Local Choice";
     }
 
     if (keysTyped >= typerCost) {
@@ -424,7 +470,7 @@ void draw() {
         fill(0, 200, 0);
       }
     } else {
-       fill(128, 0, 0);
+      fill(128, 0, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minBuilderButtonY && mouseY <= maxBuilderButtonY)) {
         fill(200, 0, 0);
       }
@@ -502,7 +548,7 @@ void draw() {
     rect(255, 10, 150, 50);
     fill(0, 0, 0);
     text("Rebirth", 300, 45);
-    if (automationAchievementEarned == true && typerUpgradeOwned == false) {
+    if (automationAchievementEarned == true && typerUpgradeOwned == false && typersOwned >= 1) {
       fill(255, 255, 255);
       rect(310, 120, 50, 50);
       image(typerImage, 310, 120, 50, 50);
@@ -526,11 +572,25 @@ void draw() {
         fill(0, 0, 0);
         text("Keyboard Lessons", 335, 120);
         textSize(16);
-        text("Doubles keys earned from typers", 335, 140);
+        text("Doubles keys earned from typing", 335, 140);
         text("Price " + typingLessonUpgradeCost + " Keys", 335, 160);
       }
     }
-        if (everythingAchievementEarned == true && advertiserUpgradeOwned == false) {
+    if (decaAutomationAchievementEarned == true && builderUpgradeOwned == false && keyboardBuildersOwned >= 1) {
+      fill(255, 255, 255);
+      rect(310, 170, 50, 50);
+      image(builderImage, 310, 170, 50, 50);
+      if ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY)) {
+        rect(375, 150, 250, 75);
+        textSize(18);
+        fill(0, 0, 0);
+        text("Faster Training", 385, 170);
+        textSize(16);
+        text("Doubles keys earned from builders", 385, 190);
+        text("Price " + builderUpgradeCost + " Keys", 385, 210);
+      }
+    }
+    if (everythingAchievementEarned == true && advertiserUpgradeOwned == false) {
       fill(255, 255, 255);
       rect(260, 170, 50, 50);
       image(advertiserImage, 260, 170, 50, 50);
@@ -543,19 +603,19 @@ void draw() {
         text("Doubles keys earned from advertisers", 335, 190);
         text("Price " + advertiserUpgradeCost + " Keys", 335, 210);
       }
-        }
-      if (decaAutomationAchievementEarned == true && builderUpgradeOwned == false) {
+    }
+    if (keyboardCityAchievementEarned == true && factoryUpgradeOwned == false && keyboardFactoriesOwned >= 1) {
       fill(255, 255, 255);
-      rect(310, 170, 50, 50);
-      image(builderImage, 310, 170, 50, 50);
-      if ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY)) {
-        rect(375, 150, 250, 75);
+      rect(260, 220, 50, 50);
+      image(factoryImage, 260, 220, 50, 50);
+      if ((mouseX >= minFactoryUpgradeX && mouseX <= maxFactoryUpgradeX) && (mouseY >= minFactoryUpgradeY && mouseY <= maxFactoryUpgradeY)) {
+        rect(325, 200, 250, 75);
         textSize(18);
         fill(0, 0, 0);
-        text("Faster Training", 385, 170);
-        textSize(16);
-        text("Doubles keys earned from builders", 385, 190);
-        text("Price " + builderUpgradeCost + " Keys", 385, 210);
+        text("Robot Assemblers", 335, 220);
+        textSize(14);
+        text("Doubles keys earned from factories", 335, 240);
+        text("Price " + factoryUpgradeCost + " Keys", 335, 270);
       }
     }
     if (earningAchievement == true) {
@@ -597,7 +657,7 @@ void draw() {
       textSize(32);
       text("Settings", 300, 150);
       rect(250, 175, 200, 50);
-      rect(250,275,200,50);
+      rect(250, 275, 200, 50);
       textSize(24);
       if (soundsOn == true) {
         fill(0, 0, 0);
@@ -614,7 +674,7 @@ void draw() {
         text("Music: Off", 305, 312);
       }
     }
-      if (rebirthOpen == true) {
+    if (rebirthOpen == true) {
       fill(116, 120, 129);
       stroke(50, 50, 50);
       rect(200, 100, 300, 300);
@@ -623,12 +683,12 @@ void draw() {
       textSize(32);
       text("Rebirth", 312, 150);
       textSize(16);
-      text("Rebirthing resets everything",260,190);
-      text("You keep your achievements",260,220);
-      text("Your keys output permanently doubles",225,250);
+      text("Rebirthing resets everything", 260, 190);
+      text("You keep your achievements", 260, 220);
+      text("Your keys output permanently doubles", 225, 250);
       textSize(24);
       if (rebirthNum < 3) {
-      text("Cost: " + int(rebirthCost) + " keys", 260, 300);
+        text("Cost: " + int(rebirthCost) + " keys", 260, 300);
       }
       fill(255, 255, 255);
       rect(250, 335, 200, 50);
@@ -647,7 +707,7 @@ void draw() {
       fill(116, 120, 129);
       stroke(50, 50, 50);
       rect(100, 100, 500, 300);
-       if (everythingAchievementEarned == true) {
+      if (everythingAchievementEarned == true) {
         image(achievementIco, 340, 175, 50, 50);
         if ((mouseX >= minEverythingAchievementButtonX && mouseX <= maxEverythingAchievementButtonX) && (mouseY >= minEverythingAchievementButtonY && mouseY <= maxEverythingAchievementButtonY)) {
           fill(255, 255, 255);
@@ -701,6 +761,17 @@ void draw() {
           fill(0, 0, 0);
           text("Fresh Start", 160, 175);
           text("Earn 50 keys", 160, 210);
+        }
+      }
+      if (decaAutomationAchievementEarned == true) {
+        image(achievementIco, 160, 235, 50, 50);
+        if ((mouseX >= minDecaAchievementButtonX && mouseX <= maxDecaAchievementButtonX) && (mouseY >= minDecaAchievementButtonY && mouseY <= maxDecaAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(210, 210, 200, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Deca-automation", 220, 235);
+          text("Earn 10 keys per second", 220, 270);
         }
       }
       if (alphabetAutomationAchievementEarned == true) {
@@ -780,7 +851,7 @@ void mousePressed() {
     } else if (soundsOn == true) {
       soundsOn = false;
     }
-    } else if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY) && (rebirthOpen == true) && keysTyped >= (rebirthCost)) {
+  } else if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY) && (rebirthOpen == true) && keysTyped >= (rebirthCost)) {
     rebirthNum++;
     keysTyped = 0;
     keysTypedEver = 0;
@@ -858,7 +929,7 @@ void mousePressed() {
         uiSound.play();
       }
     }
-  }  else if ((mouseX >= minRebirthButtonX && mouseX <= maxRebirthButtonX) && (mouseY >= minRebirthButtonY && mouseY <= maxRebirthButtonY)) {
+  } else if ((mouseX >= minRebirthButtonX && mouseX <= maxRebirthButtonX) && (mouseY >= minRebirthButtonY && mouseY <= maxRebirthButtonY)) {
     if (rebirthOpen == false) {
       rebirthOpen = true;
       if (soundsOn == true) {
@@ -876,19 +947,25 @@ void mousePressed() {
     if (soundsOn == true) {
       purchaseSound.play();
     }
-  } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
+  } else if ((keyboardCityAchievementEarned == true && factoryUpgradeOwned == false && keysTyped >= factoryUpgradeCost) && ((mouseX >= minFactoryUpgradeX && mouseX <= maxFactoryUpgradeX) && (mouseY >= minFactoryUpgradeY && mouseY <= maxFactoryUpgradeY))) {
+    keysTyped = keysTyped - factoryUpgradeCost;
+    factoryUpgradeOwned = true;
+    if (soundsOn == true) {
+      purchaseSound.play();
+    }
+  } else if ((automationAchievementEarned == true && typerUpgradeOwned == false && keysTyped >= typerUpgradeCost && typersOwned >= 1) && ((mouseX >= minTyperUpgradeX && mouseX <= maxTyperUpgradeX) && (mouseY >= minTyperUpgradeY && mouseY <= maxTyperUpgradeY))) {
     keysTyped = keysTyped - typerUpgradeCost;
     typerUpgradeOwned = true;
     if (soundsOn == true) {
       purchaseSound.play();
     }
-  } else if ((automationAchievementEarned == true && advertiserUpgradeOwned == false && keysTyped >= advertiserUpgradeCost) && ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY))) {
+  } else if ((everythingAchievementEarned == true && advertiserUpgradeOwned == false && keysTyped >= advertiserUpgradeCost ) && ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY))) {
     keysTyped = keysTyped - advertiserUpgradeCost;
     advertiserUpgradeOwned = true;
     if (soundsOn == true) {
       purchaseSound.play();
     }
-  } else if ((decaAutomationAchievementEarned == true && builderUpgradeOwned == false && keysTyped >= builderUpgradeCost) && ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY))) {
+  } else if ((decaAutomationAchievementEarned == true && builderUpgradeOwned == false && keysTyped >= builderUpgradeCost && keyboardBuildersOwned >= 1) && ((mouseX >= minBuilderUpgradeX && mouseX <= maxBuilderUpgradeX) && (mouseY >= minBuilderUpgradeY && mouseY <= maxBuilderUpgradeY))) {
     keysTyped = keysTyped - builderUpgradeCost;
     builderUpgradeOwned = true;
     if (soundsOn == true) {
@@ -909,7 +986,7 @@ void mousePressed() {
     saveFile.setFloat("keysFromKeyboard", keysFromKeyboard);
     saveFile.setFloat("factories", keyboardFactoriesOwned);
     saveFile.setFloat("advertisers", keyboardAdvertisersOwned);
-    saveFile.setFloat("Rebirths",rebirthNum);
+    saveFile.setFloat("Rebirths", rebirthNum);
     saveFile.setBoolean("soundsOn", soundsOn);
     saveFile.setBoolean("musicOn", musicOn);
     saveFile.setBoolean("typingLessonOwned", typingLessonUpgradeOwned);
@@ -918,10 +995,16 @@ void mousePressed() {
     saveFile.setBoolean("typingAmateurAchievementOwned", typingAmateurAchievementEarned);
     saveFile.setBoolean("sentenceAchievementOwned", sentenceAchievementEarned);
     saveFile.setBoolean("startAchievementEarned", startAchievementEarned);
-    saveFile.setBoolean("everythingAchievementEarned",everythingAchievementEarned);
-    saveFile.setBoolean("advertiserUpgradeOwned",advertiserUpgradeOwned);
-    saveFile.setBoolean("alphabetAchievementEarned",alphabetAutomationAchievementEarned);
-    
+    saveFile.setBoolean("everythingAchievementEarned", everythingAchievementEarned);
+    saveFile.setBoolean("advertiserUpgradeOwned", advertiserUpgradeOwned);
+    saveFile.setBoolean("factoryUpgradeOwned", factoryUpgradeOwned);
+    saveFile.setBoolean("builderUpgradeOwned", builderUpgradeOwned);
+    saveFile.setBoolean("CityAchievementEarned", keyboardCityAchievementEarned);
+    saveFile.setBoolean("alphabetAchievementEarned", alphabetAutomationAchievementEarned);
+    saveFile.setBoolean("localTyperAchievementEarned", localTyperAchievementEarned);
+    saveFile.setBoolean("rebornAchievementEarned", rebornAchievementEarned);
+    saveFile.setBoolean("neverTypeAchievementEarned", neverTypeAchievementEarned);
+    saveFile.setBoolean("decaAutomationAchievementEarned", decaAutomationAchievementEarned);
     saveJSONObject(saveFile, "data/save.json"); //saves all of those values to a .json file in the data folder with the name of "save"
   } else if ((mouseX >= paycheckPosX && mouseX <= maxPaycheckX) && (mouseY >= paycheckPosY && mouseY <= maxPaycheckY)) {
     paycheckOnScreen = false;
