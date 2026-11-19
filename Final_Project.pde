@@ -15,6 +15,9 @@ Image Citations:
  https://www.flaticon.com/free-icon/factory_4297439
  https://www.pngkey.com/maxpic/u2e6r5w7w7u2t4e6/
  https://iconscout.com/3d-icon/keycap-a-3d-icon_9741287
+ https://www.presentermedia.com/powerpoint-clipart/trophy-pid-17029
+ https://www.flaticon.com/free-icon/paycheck_9154217
+ https://freeiconbazaar.com/en/illustrations/004-person-typing-on-a-laptop/rounded/
  
  Sound Effects Citations:
  https://pixabay.com/sound-effects/film-special-effects-keyboard-click-327728/
@@ -179,10 +182,30 @@ int maxAlphabetAchievementButtonX = minAlphabetAchievementButtonX + 50;
 int minAlphabetAchievementButtonY = 235;
 int maxAlphabetAchievementButtonY = minAlphabetAchievementButtonY + 50;
 
+int minNeverAchievementButtonX = 100;
+int maxNeverAchievementButtonX = minNeverAchievementButtonX + 50;
+int minNeverAchievementButtonY = 295;
+int maxNeverAchievementButtonY = minNeverAchievementButtonY + 50;
+
 int minDecaAchievementButtonX = 160;
 int maxDecaAchievementButtonX = minDecaAchievementButtonX + 50;
 int minDecaAchievementButtonY = 235;
 int maxDecaAchievementButtonY = minDecaAchievementButtonY + 50;
+
+int minCityAchievementButtonX = 220;
+int maxCityAchievementButtonX = minCityAchievementButtonX + 50;
+int minCityAchievementButtonY = 235;
+int maxCityAchievementButtonY = minCityAchievementButtonY + 50;
+
+int minLocalAchievementButtonX = 280;
+int maxLocalAchievementButtonX = minLocalAchievementButtonX + 50;
+int minLocalAchievementButtonY = 235;
+int maxLocalAchievementButtonY = minLocalAchievementButtonY + 50;
+
+int minRebornAchievementButtonX = 340;
+int maxRebornAchievementButtonX = minRebornAchievementButtonX + 50;
+int minRebornAchievementButtonY = 235;
+int maxRebornAchievementButtonY = minRebornAchievementButtonY + 50;
 
 int minSentenceAchievementButtonX = 160;
 int maxSentenceAchievementButtonX = minSentenceAchievementButtonX + 50;
@@ -283,7 +306,7 @@ void setup() {
     everythingAchievementEarned = loadedSave.getBoolean("everythingAchievementEarned");
     advertiserUpgradeOwned = loadedSave.getBoolean("advertiserUpgradeOwned");
     alphabetAutomationAchievementEarned = loadedSave.getBoolean("alphabetAchievementEarned");
-     keyboardCityAchievementEarned = loadedSave.getBoolean("CityAchievementEarned");
+    keyboardCityAchievementEarned = loadedSave.getBoolean("CityAchievementEarned");
     factoryUpgradeOwned = loadedSave.getBoolean("factoryUpgradeOwned");
     builderUpgradeOwned = loadedSave.getBoolean("builderUpgradeOwned");
     localTyperAchievementEarned =   loadedSave.getBoolean("localTyperAchievementEarned");
@@ -330,7 +353,9 @@ void draw() {
     text("Play", 300, 300);
   } else if (playingGame == true) {
     if (rebirthNum > 0) {
-      rebirthMult = rebirthNum * 2;
+      rebirthMult = pow(2, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
+    } else if (rebirthNum > 3) {
+      rebirthNum = 3;
     } else {
       rebirthMult = 1;
     }
@@ -590,7 +615,7 @@ void draw() {
         text("Price " + builderUpgradeCost + " Keys", 385, 210);
       }
     }
-    if (everythingAchievementEarned == true && advertiserUpgradeOwned == false) {
+    if (everythingAchievementEarned == true && advertiserUpgradeOwned == false && keyboardAdvertisersOwned >= 1) {
       fill(255, 255, 255);
       rect(260, 170, 50, 50);
       image(advertiserImage, 260, 170, 50, 50);
@@ -714,8 +739,8 @@ void draw() {
           rect(400, 150, 250, 75);
           textSize(18);
           fill(0, 0, 0);
-          text("One with everything", 400, 175);
-          text("Have one of every building", 400, 210);
+          text("One with everything", 410, 175);
+          text("Have one of every building", 410, 210);
         }
       }
       if (automationAchievementEarned == true) {
@@ -763,6 +788,39 @@ void draw() {
           text("Earn 50 keys", 160, 210);
         }
       }
+      if (rebornAchievementEarned == true) {
+        image(achievementIco, 340, 235, 50, 50);
+        if ((mouseX >= minRebornAchievementButtonX && mouseX <= maxRebornAchievementButtonX) && (mouseY >= minRebornAchievementButtonY && mouseY <= maxRebornAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(390, 210, 200, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Born Again", 400, 235);
+          text("Rebirth for the first time", 400, 270);
+        }
+      }
+      if (localTyperAchievementEarned == true) {
+        image(achievementIco, 280, 235, 50, 50);
+        if ((mouseX >= minLocalAchievementButtonX && mouseX <= maxLocalAchievementButtonX) && (mouseY >= minLocalAchievementButtonY && mouseY <= maxLocalAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(330, 210, 200, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Local Choice", 340, 235);
+          text("Earn 1 000 keys", 340, 270);
+        }
+      }
+      if (keyboardCityAchievementEarned == true) {
+        image(achievementIco, 220, 235, 50, 50);
+        if ((mouseX >= minCityAchievementButtonX && mouseX <= maxCityAchievementButtonX) && (mouseY >= minCityAchievementButtonY && mouseY <= maxCityAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(270, 210, 200, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Keyboard City", 280, 235);
+          text("Earn 10 000 keys", 280, 270);
+        }
+      }
       if (decaAutomationAchievementEarned == true) {
         image(achievementIco, 160, 235, 50, 50);
         if ((mouseX >= minDecaAchievementButtonX && mouseX <= maxDecaAchievementButtonX) && (mouseY >= minDecaAchievementButtonY && mouseY <= maxDecaAchievementButtonY)) {
@@ -785,17 +843,28 @@ void draw() {
           text("Earn 26 keys per second", 160, 270);
         }
       }
+      if (neverTypeAchievementEarned == true) {
+        image(achievementIco, 100, 295, 50, 50);
+        if ((mouseX >= minNeverAchievementButtonX && mouseX <= maxNeverAchievementButtonX) && (mouseY >= minNeverAchievementButtonY && mouseY <= maxNeverAchievementButtonY)) {
+          fill(255, 255, 255);
+          rect(150, 270, 400, 75);
+          textSize(18);
+          fill(0, 0, 0);
+          text("Nevertype", 160, 295);
+          text("Get 10 000 keys with a maximum of 50 keys typed", 160, 330);
+        }
+      }
       textSize(32);
       fill(255, 255, 255);
       text("Achievements", 260, 140);
     }
     timePlayingGame = millis() - timeAccumlated - timeInMenu - timePaycheckOnScreen;
-    if (timePlayingGame >= 5000 && paycheckOnScreen == false && boostInUse == false) {
+    if (timePlayingGame >= 30000 && paycheckOnScreen == false && boostInUse == false) {
       timeAccumlated = millis() - timeInMenu;
       int boostSpawnChance = int(random(1, 2));
       if (boostSpawnChance == 1) {
-        paycheckPosX = int(random(150, 551));
-        paycheckPosY = int(random(150, 551));
+        paycheckPosX = int(random(100, 601));
+        paycheckPosY = int(random(100, 401));
         paycheckOnScreen = true;
       }
     }
@@ -959,7 +1028,7 @@ void mousePressed() {
     if (soundsOn == true) {
       purchaseSound.play();
     }
-  } else if ((everythingAchievementEarned == true && advertiserUpgradeOwned == false && keysTyped >= advertiserUpgradeCost ) && ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY))) {
+  } else if ((everythingAchievementEarned == true && advertiserUpgradeOwned == false && keysTyped >= advertiserUpgradeCost ) && ((mouseX >= minAdvertiserUpgradeX && mouseX <= maxAdvertiserUpgradeX) && (mouseY >= minAdvertiserUpgradeY && mouseY <= maxAdvertiserUpgradeY) && keyboardAdvertisersOwned >= 1)) {
     keysTyped = keysTyped - advertiserUpgradeCost;
     advertiserUpgradeOwned = true;
     if (soundsOn == true) {
@@ -1056,8 +1125,8 @@ void mousePressed() {
     } else {
       int boostChoiceNum = int(random(1, 4));
       if (boostChoiceNum == 1) {
-        keysTyped = keysTyped + (30 * rebirthMult);
-        keysTypedEver = keysTypedEver + (30 * rebirthMult);
+        keysTyped = keysTyped + (15 * rebirthMult);
+        keysTypedEver = keysTypedEver + (15 * rebirthMult);
         if (soundsOn == true) {
           boostLuckyEarnSound.play();
         }
