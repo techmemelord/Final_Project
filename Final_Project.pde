@@ -123,7 +123,7 @@ float keyboardAdvertiserCost;
 
 float keyboardSizeX = 225;
 float keyboardSizeY = 100;
-float keyboardPosX = 12;
+float keyboardPosX = 15;
 float keyboardPosY = 250;
 
 float rebirthCost;
@@ -149,7 +149,7 @@ int minStartButtonY = 250;
 int maxStartButtonX = minStartButtonX  + 200;
 int maxStartButtonY = minStartButtonY + 75;
 
-int minUpgradeButtonX = 410;
+int minUpgradeButtonX = 400;
 int maxUpgradeButtonX = minUpgradeButtonX + 75;
 
 int minTypersButtonY = 118;
@@ -167,9 +167,9 @@ int maxFactoryButtonY = minFactoryButtonY + 75;
 int minAdvertiserButtonY = 418;
 int maxAdvertiserButtonY = minAdvertiserButtonY + 75;
 
-int minAchievementButtonX = 550;
+int minAchievementButtonX = 545;
 int minAchievementButtonY = 60;
-int maxAchievementButtonX = minAchievementButtonX + 150;
+int maxAchievementButtonX = minAchievementButtonX + 145;
 int maxAchievementButtonY = minAchievementButtonY + 50;
 
 int minStartAchievementButtonX = 100;
@@ -252,8 +252,8 @@ int minBuilderUpgradeY = 170;
 int maxBuilderUpgradeX = minBuilderUpgradeX + 50;
 int maxBuilderUpgradeY = minBuilderUpgradeY + 50;
 
-int minSettingsButtonX = 550;
-int maxSettingsButtonX = minSettingsButtonX + 150;
+int minSettingsButtonX = 545;
+int maxSettingsButtonX = minSettingsButtonX + 145;
 int minSettingsButtonY = 10;
 int maxSettingsButtonY = minSettingsButtonY + 50;
 
@@ -267,15 +267,15 @@ int maxSettingsMusicButtonX = minSettingsMusicButtonX + 200;
 int minSettingsMusicButtonY = 275;
 int maxSettingsMusicButtonY = minSettingsMusicButtonY + 50;
 
-int minSaveButtonX = 255;
-int maxSaveButtonX = minSaveButtonX + 150;
+int minSaveButtonX = 400;
+int maxSaveButtonX = minSaveButtonX + 145;
 int minSaveButtonY = 60;
 int maxSaveButtonY = minSaveButtonY + 50;
 
-int minRebirthButtonX = 255;
-int maxRebirthButtonX = minSettingsButtonX + 150;
+int minRebirthButtonX = 400;
+int maxRebirthButtonX = minRebirthButtonX + 145;
 int minRebirthButtonY = 10;
-int maxRebirthButtonY = minSettingsButtonY + 50;
+int maxRebirthButtonY = minRebirthButtonY + 50;
 
 int minRebirtherButtonX = 250;
 int maxRebirtherButtonX = minRebirtherButtonX + 200;
@@ -385,7 +385,7 @@ void draw() {
     if (factoryUpgradeOwned == true) {
       factoryMultiplier = 2;
     }
-    stroke(50, 50, 50);
+    stroke(0, 0, 0);
     rebirthCost = 1000000 * pow(10, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
     typerKPS = (typersOwned * typerMultiplier * 0.1);
     keyboardProKPS = keyboardProsOwned;
@@ -407,17 +407,20 @@ void draw() {
     text("Keys per second " + keysPerSecond, 25, 90);
     textSize(32);
     fill(50, 50, 50);
-    rect(400, 110, 10, 400);
+    rect(390, 110, 10, 400);
     rect(250, 0, 10, 500);
-    rect(250, 110, 450, 10);
+
+    rect(0, 0, 10, 700);
+    rect(690, 0, 10, 700);
     rect(0, 490, 700, 10);
+    rect(0, 0, 700, 10);
     fill(255, 255, 255);
     strokeWeight(3);
-    rect(410, 118, 300, 75);
-    rect(410, 193, 300, 75);
-    rect(410, 268, 300, 75);
-    rect(410, 343, 300, 75);
-    rect(410, 418, 300, 75);
+    rect(400, 118, 290, 75);
+    rect(400, 193, 290, 75);
+    rect(400, 268, 290, 75);
+    rect(400, 343, 290, 75);
+    rect(400, 418, 290, 75);
 
     if (keysTypedEver >= 50 && startAchievementEarned == false) {
       startAchievementEarned = true;
@@ -476,7 +479,7 @@ void draw() {
         fill(200, 0, 0);
       }
     }
-    rect(410, 118, 75, 75);
+    rect(400, 118, 75, 75);
     if (keysTyped >= keyboardProCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minProButtonY && mouseY <= maxProButtonY)) {
@@ -488,7 +491,7 @@ void draw() {
         fill(200, 0, 0);
       }
     }
-    rect(410, 193, 75, 75);
+    rect(400, 193, 75, 75);
     if (keysTyped >= keyboardBuilderCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minBuilderButtonY && mouseY <= maxBuilderButtonY)) {
@@ -500,7 +503,7 @@ void draw() {
         fill(200, 0, 0);
       }
     }
-    rect(410, 268, 75, 75);
+    rect(400, 268, 75, 75);
     if (keysTyped >= keyboardFactoryCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minFactoryButtonY && mouseY <= maxFactoryButtonY)) {
@@ -512,7 +515,7 @@ void draw() {
         fill(200, 0, 0);
       }
     }
-    rect(410, 343, 75, 75);
+    rect(400, 343, 75, 75);
     if (keysTyped >= keyboardAdvertiserCost) {
       fill(0, 128, 0);
       if ((mouseX >= minUpgradeButtonX && mouseX <= maxUpgradeButtonX) && (mouseY >= minAdvertiserButtonY && mouseY <= maxAdvertiserButtonY)) {
@@ -524,32 +527,32 @@ void draw() {
         fill(200, 0, 0);
       }
     }
-    rect(410, 418, 75, 75);
+    rect(400, 418, 75, 75);
     fill(255, 255, 255);
-    text("Buy", 420, 165);
-    text("Buy", 420, 240);
-    text("Buy", 420, 315);
-    text("Buy", 420, 390);
-    text("Buy", 420, 465);
+    text("Buy", 410, 165);
+    text("Buy", 410, 240);
+    text("Buy", 410, 315);
+    text("Buy", 410, 390);
+    text("Buy", 410, 465);
     image(keyboard, keyboardPosX, keyboardPosY, keyboardSizeX, keyboardSizeY);
-    image(typerImage, 625, 120, 70, 70);
-    image(keyboardProImage, 625, 185, 90, 90);
-    image(builderImage, 650, 290, 50, 50);
-    image(factoryImage, 650, 368, 50, 50);
-    image(advertiserImage, 650, 445, 50, 50);
+    image(typerImage, 615, 120, 70, 70);
+    image(keyboardProImage, 615, 185, 90, 90);
+    image(builderImage, 640, 290, 50, 50);
+    image(factoryImage, 640, 368, 50, 50);
+    image(advertiserImage, 640, 445, 50, 50);
     fill(0, 0, 0);
     textSize(22);
-    text("Auto Typers", 495, 140);
-    text("Keyboard Pros", 495, 215);
-    text("Keyboard Builders", 495, 290);
-    text("Keyboard Factories", 495, 365);
-    text("Keyboard Advertisers", 495, 440);
+    text("Auto Typers", 485, 140);
+    text("Keyboard Pros", 485, 215);
+    text("Keyboard Builders", 485, 290);
+    text("Keyboard Factories", 485, 365);
+    text("Keyboard Advertisers", 485, 440);
     textSize(20);
-    text("Price: " + int(typerCost) + " Keys", 495, 185);
-    text("Price: " + int(keyboardProCost) + " Keys", 495, 260);
-    text("Price: " + int(keyboardBuilderCost) + " Keys", 495, 335);
-    text("Price: " + int(keyboardFactoryCost) + " Keys", 495, 410);
-    text("Price: " + int(keyboardAdvertiserCost) + " Keys", 495, 485);
+    text("Price: " + int(typerCost) + " Keys", 485, 185);
+    text("Price: " + int(keyboardProCost) + " Keys", 485, 260);
+    text("Price: " + int(keyboardBuilderCost) + " Keys", 485, 335);
+    text("Price: " + int(keyboardFactoryCost) + " Keys", 485, 410);
+    text("Price: " + int(keyboardAdvertiserCost) + " Keys", 485, 485);
     fill(255, 255, 255);
     if (boostInUse == true) {
       textSize(18);
@@ -558,21 +561,44 @@ void draw() {
       text(boostDescription + " for " + (((timeWithBoost / 1000) * -1) + 30) + " seconds", 10, 450);
     }
     textSize(20);
-    rect(550, 60, 150, 50);
+    if ((mouseX >= minAchievementButtonX && mouseX <= maxAchievementButtonX) && (mouseY >= minAchievementButtonY && mouseY <= maxAchievementButtonY)) {
+      fill(200, 200, 200);
+    } else {
+      fill(255, 255, 255);
+    }
+    rect(545, 60, 145, 50);
     fill(0, 0, 0);
-    text("Achievements", 570, 95);
-    fill(255, 255, 255);
-    rect(255, 60, 150, 50);
+    text("Achievements", 560, 95);
+    if ((mouseX >= minSaveButtonX && mouseX <= maxSaveButtonX) && (mouseY >= minSaveButtonY && mouseY <= maxSaveButtonY)) {
+      fill(200, 200, 200);
+    } else {
+      fill(255, 255, 255);
+    }
+    rect(400, 60, 145, 50);
     fill(0, 0, 0);
-    text("Save", 312, 95);
-    fill(255, 255, 255);
-    rect(550, 10, 150, 50);
+    text("Save", 452, 95);
+    if ((mouseX >= minSettingsButtonX && mouseX <= maxSettingsButtonX) && (mouseY >= minSettingsButtonY && mouseY <= maxSettingsButtonY)) {
+      fill(200, 200, 200);
+    } else {
+      fill(255, 255, 255);
+    }
+    rect(545, 10, 145, 50);
     fill(0, 0, 0);
-    text("Settings", 595, 45);
-    fill(255, 255, 255);
-    rect(255, 10, 150, 50);
+    text("Settings", 585, 45);
+    if ((mouseX >= minRebirthButtonX && mouseX <= maxRebirthButtonX) && (mouseY >= minRebirthButtonY && mouseY <= maxRebirthButtonY)) {
+      fill(200, 200, 200);
+    } else {
+      fill(255, 255, 255);
+    }
+    rect(400, 10, 145, 50);
     fill(0, 0, 0);
-    text("Rebirth", 300, 45);
+    text("Rebirth", 440, 45);
+    strokeWeight(0);
+    stroke(0, 0, 0);
+    fill(50, 50, 50);
+    rect(390, 110, 310, 7);
+    rect(250, 110, 150, 10);
+    strokeWeight(3);
     if (automationAchievementEarned == true && typerUpgradeOwned == false && typersOwned >= 1) {
       fill(255, 255, 255);
       rect(310, 120, 50, 50);
@@ -681,7 +707,17 @@ void draw() {
       stroke(0, 0, 0);
       textSize(32);
       text("Settings", 300, 150);
+      if ((mouseX >= minSettingsSoundButtonX && mouseX <= maxSettingsSoundButtonX) && (mouseY >= minSettingsSoundButtonY && mouseY <= maxSettingsSoundButtonY)) {
+        fill(200, 200, 200);
+      } else {
+        fill(255, 255, 255);
+      }
       rect(250, 175, 200, 50);
+      if ((mouseX >= minSettingsMusicButtonX && mouseX <= maxSettingsMusicButtonX) && (mouseY >= minSettingsMusicButtonY && mouseY <= maxSettingsMusicButtonY)) {
+        fill(200, 200, 200);
+      } else {
+        fill(255, 255, 255);
+      }
       rect(250, 275, 200, 50);
       textSize(24);
       if (soundsOn == true) {
@@ -715,7 +751,11 @@ void draw() {
       if (rebirthNum < 3) {
         text("Cost: " + int(rebirthCost) + " keys", 260, 300);
       }
-      fill(255, 255, 255);
+      if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY)) {
+        fill(200, 200, 200);
+      } else {
+        fill(255, 255, 255);
+      }
       rect(250, 335, 200, 50);
       if (rebirthNum == 3) {
         fill(0, 0, 0);
@@ -881,18 +921,18 @@ void draw() {
       keysTyped = keysTyped + (keysPerSecond / frameRate); //frameRate outputs to the amount of frames that the processing sketch is currently running at
       keysTypedEver = keysTypedEver + (keysPerSecond / frameRate);
     }
-    if (keyTyped == true && keyboardSizeX <= 250 && keyboardSizeY <= 125 && keyboardPosX >= 0 && keyboardPosY >= 225 && keyboardIsBig == false) {
+    if (keyTyped == true && keyboardSizeX <= 250 && keyboardSizeY <= 125 && keyboardPosX >= 5 && keyboardPosY >= 225 && keyboardIsBig == false) {
       keyboardSizeX += (25 / frameRate * 10);
       keyboardSizeY += (25 / frameRate * 10);
-      keyboardPosX -= (12 / frameRate * 10);
+      keyboardPosX -= (10 / frameRate * 10);
       keyboardPosY -= (25 / frameRate * 10);
-      if (keyboardSizeX >= 250 && keyboardSizeY >= 125 && keyboardPosX <= 0 && keyboardPosY <= 225 ) {
+      if (keyboardSizeX >= 250 && keyboardSizeY >= 125 && keyboardPosX <= 5 && keyboardPosY <= 225 ) {
         keyboardIsBig = true;
       }
-    } else if (keyTyped == true && keyboardSizeX >= 225 && keyboardSizeY >= 100 && keyboardPosX <= 12 && keyboardPosY <= 250 && keyboardIsBig == true) {
+    } else if (keyTyped == true && keyboardSizeX >= 225 && keyboardSizeY >= 100 && keyboardPosX <= 15 && keyboardPosY <= 250 && keyboardIsBig == true) {
       keyboardSizeX -= (25 / frameRate * 10);
       keyboardSizeY -= (25 / frameRate * 10);
-      keyboardPosX += (12 / frameRate * 10);
+      keyboardPosX += (10 / frameRate * 10);
       keyboardPosY += (25 / frameRate * 10);
     } else {
       keyTyped = false;
@@ -920,7 +960,7 @@ void mousePressed() {
     } else if (soundsOn == true) {
       soundsOn = false;
     }
-  } else if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY) && (rebirthOpen == true) && keysTyped >= (rebirthCost)) {
+  } else if ((mouseX >= minRebirtherButtonX && mouseX <= maxRebirtherButtonX) && (mouseY >= minRebirtherButtonY && mouseY <= maxRebirtherButtonY) && (rebirthOpen == true) && keysTyped >= (rebirthCost) && rebirthNum < 3) {
     rebirthNum++;
     keysTyped = 0;
     keysTypedEver = 0;
@@ -1164,7 +1204,7 @@ void keyPressed() {
     keyTyped = true;
     keyboardSizeX = 225;
     keyboardSizeY = 100;
-    keyboardPosX = 12;
+    keyboardPosX = 15;
     keyboardPosY = 250;
   }
 }
