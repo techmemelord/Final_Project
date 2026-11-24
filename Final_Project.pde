@@ -18,6 +18,8 @@ Image Citations:
  https://www.presentermedia.com/powerpoint-clipart/trophy-pid-17029
  https://www.flaticon.com/free-icon/paycheck_9154217
  https://freeiconbazaar.com/en/illustrations/004-person-typing-on-a-laptop/rounded/
+ https://www.auroragraphics.net/product/diamond-plate-1/
+ image in title screen (title image) is made with microsoft paint
  
  Sound Effects Citations:
  https://pixabay.com/sound-effects/film-special-effects-keyboard-click-327728/
@@ -50,6 +52,8 @@ PImage advertiserImage;
 PImage achievementIco;
 PImage keyboardUpgradeIco;
 PImage checkIco;
+PImage gameBg;
+PImage titleIco;
 char previousKey;
 
 boolean typingLessonUpgradeOwned = false;
@@ -145,7 +149,7 @@ int paycheckPosX;
 int paycheckPosY;
 
 int minStartButtonX = 250;
-int minStartButtonY = 250;
+int minStartButtonY = 300;
 int maxStartButtonX = minStartButtonX  + 200;
 int maxStartButtonY = minStartButtonY + 75;
 
@@ -330,6 +334,8 @@ void setup() {
   achievementIco = loadImage("trophy.png");
   keyboardUpgradeIco = loadImage("keycapUpgIco.png");
   checkIco = loadImage("paycheck.png");
+  gameBg = loadImage("metal texture.png");
+  titleIco = loadImage("title.png");
 }
 
 void draw() {
@@ -337,20 +343,20 @@ void draw() {
     background(0, 0, 0);
     textSize(32);
     fill(255, 255, 255);
-    text("Keyboard Typer", 250, 75);
+        image(titleIco,100,0,500,200);
     textSize(18);
-    text("A game about keyboards and typing", 225, 100);
+    text("A game about keyboards and typing", 212, 200);
     textSize(32);
-    text("Click the button to start playing", 150, 200);
+    text("Click the button to start playing", 137, 250);
     if ((mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
       fill(0, 200, 0);
     } else {
       fill(0, 128, 0);
     }
-    rect(250, 250, 200, 75);
+    rect(250, 300, 200, 75);
     fill(255, 255, 255);
     textSize(56);
-    text("Play", 300, 300);
+    text("Play", 300, 350);
   } else if (playingGame == true) {
     if (rebirthNum > 0) {
       rebirthMult = pow(2, rebirthNum); //the pow function will multiply the first number the amount of times of the second number by itself, essentially, it is an exponents function
@@ -398,14 +404,26 @@ void draw() {
     keyboardFactoryCost = 5000 + (keyboardFactoriesOwned * 5000 * 0.4);
     keyboardAdvertiserCost = 8000 + (keyboardAdvertisersOwned * 8000 * 0.4);
     keysPerSecond = (typerKPS + keyboardProKPS + keyboardBuilderKPS + keyboardFactoryKPS + keyboardAdvertiserKPS) * kpsBoostMult * rebirthMult;
-    background(116, 120, 129);
+    background(gameBg);
     fill(255, 255, 255);
-    strokeWeight(0);
+    strokeWeight(3);
     textSize(32);
+    rect(0,10,250,100);
+    fill(0,0,0);
     text(int(keysTyped) + " Keys", 75, 45);
     textSize(24);
     text("Keys per second " + keysPerSecond, 25, 90);
+    if (boostInUse == true) {
+      fill(255,255,255);
+      rect(0,375,250,100);
+      textSize(18);
+      fill(0,0,0);
+      text(boostName + "!", 65, 400);
+      textSize(16);
+      text(boostDescription + " for " + (((timeWithBoost / 1000) * -1) + 30) + " seconds", 15, 450);
+    }
     textSize(32);
+    strokeWeight(0);
     fill(50, 50, 50);
     rect(390, 110, 10, 400);
     rect(250, 0, 10, 500);
@@ -554,12 +572,7 @@ void draw() {
     text("Price: " + int(keyboardFactoryCost) + " Keys", 485, 410);
     text("Price: " + int(keyboardAdvertiserCost) + " Keys", 485, 485);
     fill(255, 255, 255);
-    if (boostInUse == true) {
-      textSize(18);
-      text(boostName + "!", 65, 400);
-      textSize(16);
-      text(boostDescription + " for " + (((timeWithBoost / 1000) * -1) + 30) + " seconds", 10, 450);
-    }
+    
     textSize(20);
     if ((mouseX >= minAchievementButtonX && mouseX <= maxAchievementButtonX) && (mouseY >= minAchievementButtonY && mouseY <= maxAchievementButtonY)) {
       fill(200, 200, 200);
@@ -898,7 +911,7 @@ void draw() {
       fill(255, 255, 255);
       text("Achievements", 260, 140);
     }
-    timePlayingGame = millis() - timeAccumlated - timeInMenu - timePaycheckOnScreen;
+    timePlayingGame = millis() - timeAccumlated - timeInMenu - timePaycheckOnScreen - timeWithBoost;
     if (timePlayingGame >= 30000 && paycheckOnScreen == false && boostInUse == false) {
       timeAccumlated = millis() - timeInMenu;
       int boostSpawnChance = int(random(1, 2));
