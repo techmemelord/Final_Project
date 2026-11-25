@@ -348,10 +348,12 @@ void draw() {
     text("A game about keyboards and typing", 212, 200);
     textSize(32);
     text("Click the button to start playing", 137, 250);
+    image(keyboardProImage,-30,340,200,200);
+    image(keyboard,500,425,200,75);
     if ((mouseX >= minStartButtonX && mouseX <= maxStartButtonX) && (mouseY >= minStartButtonY && mouseY <= maxStartButtonY)) {
-      fill(0, 200, 0);
+      fill(100, 100, 100);
     } else {
-      fill(0, 128, 0);
+      fill(80, 80, 80);
     }
     rect(250, 300, 200, 75);
     fill(255, 255, 255);
@@ -983,8 +985,12 @@ void mousePressed() {
     keyboardFactoriesOwned = 0;
     keyboardAdvertisersOwned = 0;
     typingLessonUpgradeOwned = false;
+    builderUpgradeOwned = false;
+    factoryUpgradeOwned = false;
+    typerUpgradeOwned = false;
     advertiserMultiplier = 1;
     advertiserUpgradeOwned = false;
+    
     typingMultiplier = 1;
     typerMultiplier = 1;
     if (soundsOn == true) {
